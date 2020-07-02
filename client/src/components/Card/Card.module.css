@@ -1,0 +1,48 @@
+.cardContainer {
+  font-weight: 500;
+  font-size: 36px;
+  text-align: center;
+  border: 3px solid black;
+  padding: 4px;
+  margin: 5px;
+  width: 60px;
+  height: fit-content;
+}
+
+.innerContainer {
+  padding: 4px;
+  border: 1px solid black;
+}
+
+.innerContainer > div {
+  padding: 6px 0;
+}
+
+.cardContainer.green {
+  background: green;
+}
+
+.cardContainer.red {
+  background: red;
+}
+
+.cardContainer.yellow {
+  background: yellow;
+}
+
+.cardContainer.white {
+  background: white;
+}
+
+.topCharacter {
+  border-bottom: 1px solid black;
+}
+
+.bottomCharacter {
+  -webkit-transform: rotate(-180deg);
+  -moz-transform: rotate(-180deg);
+  -o-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+  ms-filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation=2)';
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+}

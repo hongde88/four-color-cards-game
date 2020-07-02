@@ -1,0 +1,9 @@
+.handContainer {
+  display: flex;
+  overflow-y: hidden;
+  z-index: 1000;
+  margin: auto;
+}
+
+.myHand {
+}

@@ -1,0 +1,39 @@
+.cardsLeftText {
+  position: absolute;
+  z-index: 1000;
+  font-size: 30px;
+  border-radius: 20px;
+  background: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+}
+
+.topHand > div {
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.leftHand > div {
+  left: 0;
+}
+
+.rightHand > div {
+  right: 0;
+}
+
+.leftHand > div,
+.rightHand > div {
+  top: 50%;
+  margin-top: -60px;
+}
+
+.leftHand > .cardsLeftText,
+.rightHand > .cardsLeftText {
+  margin-top: -80px !important;
+}
