@@ -37,3 +37,12 @@
 .rightHand > .cardsLeftText {
   margin-top: -80px !important;
 }
+
+.topHand > div:last-child {
+  margin-right: 200px;
+}
+
+.leftHand > div:last-child,
+.rightHand > div:last-child {
+  margin-top: 20px !important;
+}

@@ -11,8 +11,12 @@ const CardBack = ({ degree }) => {
   );
 };
 
+CardBack.defaultProps = {
+  degree: 180,
+};
+
 CardBack.propTypes = {
-  degree: PropTypes.number.isRequired,
+  degree: PropTypes.number,
 };
 
 export default CardBack;

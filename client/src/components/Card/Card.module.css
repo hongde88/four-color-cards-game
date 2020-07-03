@@ -9,6 +9,11 @@
   height: fit-content;
 }
 
+.cardContainer.small {
+  font-size: 24px;
+  width: 48px;
+}
+
 .innerContainer {
   padding: 4px;
   border: 1px solid black;

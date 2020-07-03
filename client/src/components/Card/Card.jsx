@@ -13,11 +13,11 @@ const CHARACTERS = {
   soldier: '兵',
 };
 
-const Card = ({ card }) => {
+const Card = ({ card, size }) => {
   const { character, color } = card;
 
   return (
-    <div className={`${styles.cardContainer} ${styles[color]}`}>
+    <div className={`${styles.cardContainer} ${styles[color]} ${styles[size]}`}>
       <div className={styles.innerContainer}>
         <div className={styles.topCharacter}>{CHARACTERS[character]}</div>
         <div className={styles.bottomCharacter}>{CHARACTERS[character]}</div>
@@ -26,8 +26,13 @@ const Card = ({ card }) => {
   );
 };
 
+Card.defaultProps = {
+  size: 'lg',
+};
+
 Card.propTypes = {
   card: PropTypes.object.isRequired,
+  size: PropTypes.string,
 };
 
 export default Card;

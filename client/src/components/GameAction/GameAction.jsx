@@ -6,7 +6,7 @@ import styles from './GameAction.module.css';
 const GameAction = ({ hand, card, state }) => {
   return (
     <div className={styles.actionContainer}>
-      <Card card={card} />
+      <Card card={card} size="small" />
       <div className={styles.buttonContainer}>
         <button>Đôi</button>
         <button>Khui</button>
