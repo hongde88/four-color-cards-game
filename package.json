@@ -1,0 +1,34 @@
+{
+  "name": "tu-sac",
+  "version": "1.0.0",
+  "description": "A server for tu-sac",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js",
+    "client-install": "npm install --prefix client",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lythedev/tu-sac.git"
+  },
+  "keywords": [
+    "tu-sac"
+  ],
+  "author": "LD + DN",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lythedev/tu-sac/issues"
+  },
+  "homepage": "https://github.com/lythedev/tu-sac#readme",
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}

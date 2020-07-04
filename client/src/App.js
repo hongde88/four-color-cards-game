@@ -5,6 +5,8 @@ import GameAction from './components/GameAction/GameAction';
 import Hand from './components/Hand/Hand';
 import Opponents from './components/Opponents/Opponents';
 import Graveyards from './components/Graveyards/Graveyards';
+import { Provider } from 'react-redux';
+import configureStore from './store/configureStore';
 
 const CHARACTERS = [
   'general',
@@ -154,18 +156,26 @@ const graveyards = {
 };
 
 function App() {
+  const store = configureStore();
+
   return (
-    <div className="main-content">
-      <Opponents players={players.slice(1, 4)} />
-      <div className="inner-content">
-        <Deck remaining={112 - 80} />
-        <Graveyards graveyards={graveyards} />
-        <GameAction hand={hand.slice(0, 20)} card={hand[20]} state={'choose'} />
+    <Provider store={store}>
+      <div className="main-content">
+        <Opponents players={players.slice(1, 4)} />
+        <div className="inner-content">
+          <Deck remaining={112 - 80} />
+          <Graveyards graveyards={graveyards} />
+          <GameAction
+            hand={hand.slice(0, 20)}
+            card={hand[20]}
+            state={'choose'}
+          />
+        </div>
+        <div className="hand-container">
+          <Hand hand={hand.slice(0, 20)} melded={players[0].melded} />
+        </div>
       </div>
-      <div className="hand-container">
-        <Hand hand={hand.slice(0, 20)} melded={players[0].melded} />
-      </div>
-    </div>
+    </Provider>
   );
 }
 
