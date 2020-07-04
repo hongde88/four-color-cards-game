@@ -6,12 +6,13 @@ import styles from './GameAction.module.css';
 const GameAction = ({ hand, card, state }) => {
   return (
     <div className={styles.actionContainer}>
-      <Card card={card} size="small" />
+      <Card card={card} />
       <div className={styles.buttonContainer}>
         <button>Đôi</button>
         <button>Khui</button>
         <button>Tới</button>
         <button>Đặt khàn</button>
+        <button>Bốc</button>
       </div>
     </div>
   );

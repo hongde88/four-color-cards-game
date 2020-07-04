@@ -3,8 +3,9 @@ import CardBack from '../CardBack/CardBack';
 import PropTypes from 'prop-types';
 import styles from './OpponentHand.module.css';
 import Avatar from '../Avatar/Avatar';
+import Melded from '../Melded/Melded';
 
-const OpponentHand = ({ cardsLeft, position, player }) => {
+const OpponentHand = ({ position, player }) => {
   const hand = [];
 
   const degree = position === 'top' ? 270 : 180;
@@ -15,16 +16,19 @@ const OpponentHand = ({ cardsLeft, position, player }) => {
   }
 
   return (
-    <div className={styles[`${position}Hand`]}>
-      {hand}
-      <div className={styles.cardsLeftText}>{cardsLeft}</div>
-      <Avatar name={player.name} index={player.index} small={true} />
+    <div className={`${styles[position]}`}>
+      <div className={styles.hand}>{hand}</div>
+      <div className={styles.content}>
+        <Melded groupOfCards={player.melded} position={position} />
+        <div className={styles.cardsLeftText}>{player.cardsRemaining}</div>
+        <Avatar name={player.name} index={player.index} small={true} />
+      </div>
+      <div></div>
     </div>
   );
 };
 
 OpponentHand.propTypes = {
-  cardsLeft: PropTypes.number.isRequired,
   position: PropTypes.string.isRequired,
   player: PropTypes.object.isRequired,
 };

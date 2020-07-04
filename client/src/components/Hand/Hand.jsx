@@ -1,18 +1,22 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import Card from '../Card/Card';
+import Melded from '../Melded/Melded';
 import styles from './Hand.module.css';
 
 const Hand = ({ hand, opponent }) => {
   return (
-    <div
-      className={`${styles.handContainer} ${
-        opponent ? styles.opponentHand : styles.myHand
-      }`}
-    >
-      {hand.map((card, index) => (
-        <Card key={`card${index}`} card={card} />
-      ))}
+    <div className={styles.myHand}>
+      <Melded groupOfCards={opponent.melded} position="bottom" />
+      <div
+        className={`${styles.handContainer} ${
+          opponent ? styles.opponentHand : styles.myHand
+        }`}
+      >
+        {hand.map((card, index) => (
+          <Card key={`card${index}`} card={card} />
+        ))}
+      </div>
     </div>
   );
 };

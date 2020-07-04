@@ -1,8 +1,10 @@
 .handContainer {
   display: flex;
-  overflow-y: hidden;
-  z-index: 1000;
-  margin: auto;
+  z-index: 1;
+}
+
+.handContainer > div {
+  margin: 0 4px;
 }
 
 .myHand {

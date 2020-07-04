@@ -10,7 +10,7 @@ const Avatar = ({ index, name }) => {
         className={styles.avatar}
         src={`/images/avatars/avatar_${index}.png`}
       />
-      {name}
+      <p>{name}</p>
     </div>
   );
 };

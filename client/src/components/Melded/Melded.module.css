@@ -1,0 +1,34 @@
+.container {
+  position: absolute;
+  overflow-x: auto;
+  border: 1px solid black;
+}
+
+.top {
+  left: 150px;
+}
+
+.top,
+.bottom {
+  width: 200px;
+  height: 80px;
+}
+
+.bottom {
+  position: static;
+}
+
+.left,
+.right {
+  width: 80px;
+  height: 200px;
+  top: 100px;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
