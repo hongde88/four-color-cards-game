@@ -6,9 +6,23 @@ import styles from './Graveyard.module.css';
 const Graveyard = ({ cards, position }) => {
   return (
     <div className={`${styles.container} ${styles[position]}`}>
-      {cards.map((card, index) => (
-        <Card key={`card_${index}`} card={card} size="small" />
-      ))}
+      {cards.map((card, index) => {
+        const row = Math.floor(index / 9);
+        const column = index % 9;
+        return (
+          <div
+            key={`card_${position}_${index}`}
+            style={{
+              zIndex: -100 + index,
+              position: 'absolute',
+              marginLeft: 25 * column,
+              marginTop: 50 * row,
+            }}
+          >
+            <Card card={card} size="small" />
+          </div>
+        );
+      })}
     </div>
   );
 };

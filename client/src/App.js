@@ -5,7 +5,6 @@ import GameAction from './components/GameAction/GameAction';
 import Hand from './components/Hand/Hand';
 import Opponents from './components/Opponents/Opponents';
 import Graveyards from './components/Graveyards/Graveyards';
-import MeldedPositions from './components/MeldedPositions/MeldedPositions';
 
 const CHARACTERS = [
   'general',
@@ -48,16 +47,110 @@ const players = [
       ],
     ],
   },
-  { name: 'Duc', index: 3, cardsRemaining: 20, melded: [] },
-  { name: 'Mic', index: 1, cardsRemaining: 20, melded: [] },
-  { name: 'Hoa', index: 2, cardsRemaining: 20, melded: [] },
+  {
+    name: 'Duc',
+    index: 3,
+    cardsRemaining: 20,
+    melded: [
+      [
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+      ],
+      [
+        { color: 'yellow', character: 'general' },
+        { color: 'yellow', character: 'advisor' },
+        { color: 'yellow', character: 'bishop' },
+      ],
+    ],
+  },
+  {
+    name: 'Mic',
+    index: 1,
+    cardsRemaining: 20,
+    melded: [
+      [
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+      ],
+      [
+        { color: 'yellow', character: 'general' },
+        { color: 'yellow', character: 'advisor' },
+        { color: 'yellow', character: 'bishop' },
+      ],
+    ],
+  },
+  {
+    name: 'Hoa',
+    index: 2,
+    cardsRemaining: 20,
+    melded: [
+      [
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+        { color: 'green', character: 'general' },
+      ],
+      [
+        { color: 'yellow', character: 'general' },
+        { color: 'yellow', character: 'advisor' },
+        { color: 'yellow', character: 'bishop' },
+      ],
+    ],
+  },
 ];
 
 const graveyards = {
-  'top-left': [],
-  'top-right': [],
-  'bottom-right': [],
-  'bottom-left': [],
+  'top-left': [
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+  ],
+  'top-right': [
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+  ],
+  'bottom-right': [
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+  ],
+  'bottom-left': [
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+    { color: 'yellow', character: 'general' },
+    { color: 'yellow', character: 'advisor' },
+    { color: 'yellow', character: 'bishop' },
+  ],
 };
 
 function App() {
@@ -67,11 +160,10 @@ function App() {
       <div className="inner-content">
         <Deck remaining={112 - 80} />
         <Graveyards graveyards={graveyards} />
-        <MeldedPositions players={players} />
         <GameAction hand={hand.slice(0, 20)} card={hand[20]} state={'choose'} />
       </div>
       <div className="hand-container">
-        <Hand hand={hand.slice(0, 20)} />
+        <Hand hand={hand.slice(0, 20)} melded={players[0].melded} />
       </div>
     </div>
   );

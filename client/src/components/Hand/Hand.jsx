@@ -4,10 +4,10 @@ import Card from '../Card/Card';
 import Melded from '../Melded/Melded';
 import styles from './Hand.module.css';
 
-const Hand = ({ hand, opponent }) => {
+const Hand = ({ hand, melded, opponent }) => {
   return (
     <div className={styles.myHand}>
-      <Melded groupOfCards={opponent.melded} position="bottom" />
+      <Melded groupOfCards={melded} position="bottom" />
       <div
         className={`${styles.handContainer} ${
           opponent ? styles.opponentHand : styles.myHand
@@ -27,6 +27,7 @@ Hand.defaultProps = {
 
 Hand.propTypes = {
   hand: PropTypes.array.isRequired,
+  melded: PropTypes.array.isRequired,
   opponent: PropTypes.bool,
 };
 

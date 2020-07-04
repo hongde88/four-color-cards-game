@@ -1,7 +1,11 @@
 .container {
   position: absolute;
   overflow-x: auto;
-  border: 1px solid black;
+  overflow-y: hidden;
+}
+
+.bottom .group {
+  position: relative;
 }
 
 .top {
@@ -10,8 +14,9 @@
 
 .top,
 .bottom {
-  width: 200px;
-  height: 80px;
+  height: 110px;
+  width: 100%;
+  min-width: 300px;
 }
 
 .bottom {
