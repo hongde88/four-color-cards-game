@@ -12,6 +12,16 @@ const socketMiddleware = (store) => (next) => async (action) => {
           transports: ['websocket'],
           upgrade: false,
         });
+        // socket.emit(
+        //   'join a room',
+        //   {
+        //     roomId: 'room123',
+        //   },
+        //   (response) => {
+        //     console.log(response);
+        //   }
+        // );
+        // socket.on('room joined', (response) => {});
       }
       break;
     default:
