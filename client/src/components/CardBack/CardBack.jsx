@@ -1,22 +1,43 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './CardBack.module.css';
+import React from 'react';
+import styled from 'styled-components/macro';
 
-const CardBack = ({ degree }) => {
-  const transform = 'rotate(' + degree + 'deg)';
+const CardBack = ({ degree, size }) => {
   return (
-    <div className={styles.backContainer} style={{ transform }}>
-      <div className={styles.innerContainer}></div>
-    </div>
+    <Container degree={degree} isSmall={size === 'sm'}>
+      <InnerContainer isSmall={size === 'sm'}></InnerContainer>
+    </Container>
   );
 };
 
 CardBack.defaultProps = {
-  degree: 180,
+  degree: 0,
+  size: 'sm',
 };
 
 CardBack.propTypes = {
   degree: PropTypes.number,
+  size: PropTypes.string,
 };
 
 export default CardBack;
+
+const Container = styled.div.attrs((props) => ({
+  style: {
+    transform: `rotate(${props.degree}deg)`,
+    width: props.isSmall ? '20px' : '60px',
+    border: `${props.isSmall ? '2px' : '4px'} solid black`,
+    padding: props.isSmall ? '4px' : '8px',
+    position: props.isSmall ? 'absolute' : 'static',
+  },
+}))`
+  transform-origin: top;
+  background-color: beige;
+`;
+
+const InnerContainer = styled.div.attrs((props) => ({
+  style: {
+    height: props.isSmall ? `60px` : `160px`,
+    backgroundColor: 'darkred',
+  },
+}))``;

@@ -17,6 +17,7 @@ const Melded = ({ groupOfCards, position }) => {
               margin += cardIndex === 0 ? 0 : 20;
               return (
                 <CardContainer
+                  key={`card_${cardIndex}`}
                   position={position}
                   marginLeft={
                     position === 'left'
@@ -59,6 +60,7 @@ const Container = styled.div.attrs((props) => {
       height: topOrBottom ? '110px' : '200px',
       minWidth: topOrBottom ? '300px' : '120px',
       right: props.position === 'right' ? 0 : 'auto',
+      overflowY: topOrBottom ? 'hidden' : 'auto',
     },
   };
 })`

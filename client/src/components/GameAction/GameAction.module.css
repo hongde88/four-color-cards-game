@@ -1,5 +1,4 @@
 .actionContainer {
-  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,8 +10,18 @@
   left: 0;
 
   height: 100%;
+
+  font-size: 32px;
 }
 
 .buttonContainer {
   margin-top: 30px;
+}
+
+.chooseSeatContainer {
+  display: flex;
+}
+
+.chooseSeatContainer > div {
+  margin: 10px;
 }

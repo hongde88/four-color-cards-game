@@ -184,7 +184,7 @@ function App() {
               <GameAction
                 hand={hand.slice(0, 20)}
                 card={hand[20]}
-                state={'choose'}
+                state={'choose seat'}
               />
             </Col>
             <Col col="3" className="graveyard right">
@@ -205,7 +205,7 @@ function App() {
       </Row>
       <Row noGutters className="bottom justify-content-between">
         <div className="hand">
-          <Hand cards={hand.slice(0, 20)} melded={players[0].melded} />
+          <Hand cards={hand.slice(0, 21)} melded={players[0].melded} />
         </div>
         <div className="melded">
           <Melded groupOfCards={players[0].melded} position="bottom" />

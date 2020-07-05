@@ -45,7 +45,7 @@ const Hand = ({ cards }) => {
       order: state.dragOrder,
       draggedIndex: null,
     }));
-  }, [state.dragOrder]);
+  }, []);
 
   return (
     <HandContainer>
