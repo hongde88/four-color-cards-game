@@ -1,15 +1,14 @@
+import { inRange } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useState, useCallback } from 'react';
-import Card from '../Card/Card';
-import Melded from '../Melded/Melded';
+import React, { useCallback, useState } from 'react';
 // import styles from './Hand.module.css';
 import styled from 'styled-components/macro';
+import Card from '../Card/Card';
 import Draggable from '../Draggable/Draggable';
-import { inRange } from 'lodash';
 
 const WIDTH = 30;
 
-const Hand = ({ cards, melded, opponent }) => {
+const Hand = ({ cards }) => {
   cards.forEach((card, index) => (card.id = index));
   const [state, setState] = useState({
     order: cards,
@@ -46,11 +45,10 @@ const Hand = ({ cards, melded, opponent }) => {
       order: state.dragOrder,
       draggedIndex: null,
     }));
-  }, []);
+  }, [state.dragOrder]);
 
   return (
     <HandContainer>
-      <Melded groupOfCards={melded} position="bottom" />
       <Cards>
         {state.dragOrder.map((card) => {
           const isDragging = state.draggedIndex === card.id;
@@ -92,7 +90,7 @@ export default Hand;
 
 const HandContainer = styled.div`
   position: relative;
-  height: 250px;
+  height: 154px;
 `;
 
 const CardContainer = styled.div.attrs((props) => ({
@@ -106,5 +104,4 @@ const CardContainer = styled.div.attrs((props) => ({
 
 const Cards = styled.div`
   position: absolute;
-  top: 110px;
 `;

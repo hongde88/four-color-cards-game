@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Card from '../Card/Card';
-import styles from './Melded.module.css';
 import styled from 'styled-components/macro';
 
 const Melded = ({ groupOfCards, position }) => {
@@ -56,7 +55,7 @@ const Container = styled.div.attrs((props) => {
   return {
     style: {
       marginTop: topOrBottom ? 0 : '100px',
-      marginLeft: topOrBottom ? '100px' : 0,
+      marginLeft: props.position === 'top' ? '100px' : 0,
       height: topOrBottom ? '110px' : '200px',
       minWidth: topOrBottom ? '300px' : '120px',
       right: props.position === 'right' ? 0 : 'auto',

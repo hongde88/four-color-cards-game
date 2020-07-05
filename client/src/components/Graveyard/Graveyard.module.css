@@ -2,8 +2,8 @@
   position: absolute;
   width: 200px;
   height: 100px;
-  overflow-x: auto;
   border: 1px solid black;
+  overflow: hidden;
 }
 
 .top-left {

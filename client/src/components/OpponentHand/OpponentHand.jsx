@@ -1,7 +1,6 @@
 import React from 'react';
 import CardBack from '../CardBack/CardBack';
 import PropTypes from 'prop-types';
-import styles from './OpponentHand.module.css';
 import Avatar from '../Avatar/Avatar';
 import Melded from '../Melded/Melded';
 import styled from 'styled-components/macro';
@@ -65,6 +64,8 @@ const StyledAvatar = styled.div.attrs((props) => ({
     top: 0,
     marginLeft: props.position === 'top' ? '-120px' : 0,
     right: props.position === 'right' ? 0 : 'auto',
+    marginTop:
+      props.position === 'left' || props.position === 'right' ? '-120px' : 0,
   },
 }))`
   position: absolute;
@@ -73,7 +74,7 @@ const StyledAvatar = styled.div.attrs((props) => ({
 const RemainingText = styled.div.attrs((props) => ({
   style: {
     marginLeft: '-5px',
-    marginTop: props.position === 'top' ? 0 : '-10px',
+    marginTop: props.position === 'top' ? 0 : '-20px',
     right: props.position === 'right' ? 0 : 'auto',
   },
 }))`

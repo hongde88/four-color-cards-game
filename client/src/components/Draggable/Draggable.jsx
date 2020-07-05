@@ -56,12 +56,11 @@ const Draggable = ({ children, onDrag, onDragEnd, id, zIndex }) => {
 
   const styles = useMemo(() => {
     return {
-      cursor: state.isDragging ? '-webkit-grabbing' : 'webkit-grab',
+      cursor: state.isDragging ? '-webkit-grabbing' : 'pointer',
       transform: `translate(${state.translation.x}px, ${state.translation.y}px)`,
       transition: state.isDragging ? 'none' : 'transform 500ms',
-      zIndex: state.isDragging ? 1000 : zIndex,
+      zIndex: state.isDragging ? 2 : 1,
       position: state.isDragging ? 'absolute' : 'relative',
-      cursor: 'pointer',
     };
   }, [state.isDragging, state.translation]);
 

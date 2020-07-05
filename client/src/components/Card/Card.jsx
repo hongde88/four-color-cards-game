@@ -2,7 +2,6 @@ import classNames from 'classnames/bind';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './Card.module.css';
-import Draggable from '../Draggable/Draggable';
 
 let cx = classNames.bind(styles);
 
