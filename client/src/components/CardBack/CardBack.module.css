@@ -1,5 +1,4 @@
 .backContainer {
-  z-index: -1;
   transform-origin: top;
   background-color: beige;
   border: 2px solid black;

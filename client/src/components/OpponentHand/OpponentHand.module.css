@@ -1,6 +1,5 @@
 .cardsLeftText {
   position: relative;
-  z-index: 1;
   font-size: 30px;
   border-radius: 20px;
   background: black;
@@ -10,6 +9,10 @@
   align-items: center;
   height: 40px;
   width: 40px;
+}
+
+.top {
+  height: 120px;
 }
 
 .top > .hand > div {

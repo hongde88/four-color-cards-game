@@ -3,10 +3,10 @@ import './App.css';
 import Deck from './components/Deck/Deck';
 import GameAction from './components/GameAction/GameAction';
 import Hand from './components/Hand/Hand';
-import Opponents from './components/Opponents/Opponents';
 import Graveyards from './components/Graveyards/Graveyards';
 import { Provider } from 'react-redux';
 import configureStore from './store/configureStore';
+import OpponentHand from './components/OpponentHand/OpponentHand';
 
 const CHARACTERS = [
   'general',
@@ -161,19 +161,21 @@ function App() {
   return (
     <Provider store={store}>
       <div className="main-content">
-        <Opponents players={players.slice(1, 4)} />
+        <OpponentHand position="top" player={players[1]} />
         <div className="inner-content">
-          <Deck remaining={112 - 80} />
-          <Graveyards graveyards={graveyards} />
-          <GameAction
-            hand={hand.slice(0, 20)}
-            card={hand[20]}
-            state={'choose'}
-          />
+          <OpponentHand position="left" player={players[3]} />
+          <div className="center-div">
+            <Deck remaining={112 - 80} />
+            <Graveyards graveyards={graveyards} />
+            <GameAction
+              hand={hand.slice(0, 20)}
+              card={hand[20]}
+              state={'choose'}
+            />
+          </div>
+          <OpponentHand position="right" player={players[2]} />
         </div>
-        <div className="hand-container">
-          <Hand hand={hand.slice(0, 20)} melded={players[0].melded} />
-        </div>
+        <Hand cards={hand.slice(0, 20)} melded={players[0].melded} />
       </div>
     </Provider>
   );

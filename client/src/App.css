@@ -9,22 +9,16 @@ body {
 }
 
 .main-content {
-  min-height: 650px;
-  overflow-x: auto;
-  height: 100%;
   display: flex;
-  justify-self: end;
+  flex-direction: column;
 }
 
-.inner-content {
-  z-index: -100;
-  position: absolute;
-  width: calc(100vw - 240px);
-  height: 250px;
-  overflow-x: auto;
+.center-div {
+  position: relative;
+  width: 800px;
   background-color: beige;
-  margin: 120px;
-  margin-bottom: 60px;
+  margin: auto;
+  z-index: 1;
 }
 
 .hand-container {
@@ -33,4 +27,8 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   margin: auto;
+}
+
+.inner-content {
+  display: flex;
 }

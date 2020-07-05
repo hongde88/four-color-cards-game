@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styles from './OpponentHand.module.css';
 import Avatar from '../Avatar/Avatar';
 import Melded from '../Melded/Melded';
+import styled from 'styled-components/macro';
 
 const OpponentHand = ({ position, player }) => {
   const hand = [];
@@ -16,15 +17,14 @@ const OpponentHand = ({ position, player }) => {
   }
 
   return (
-    <div className={`${styles[position]}`}>
-      <div className={styles.hand}>{hand}</div>
-      <div className={styles.content}>
-        <Melded groupOfCards={player.melded} position={position} />
-        <div className={styles.cardsLeftText}>{player.cardsRemaining}</div>
+    <Container top={position === 'top'}>
+      <Hand position={position}>{hand}</Hand>
+      <Melded groupOfCards={player.melded} position={position} />
+      <RemainingText position={position}>{player.cardsRemaining}</RemainingText>
+      <StyledAvatar position={position}>
         <Avatar name={player.name} index={player.index} small={true} />
-      </div>
-      <div></div>
-    </div>
+      </StyledAvatar>
+    </Container>
   );
 };
 
@@ -34,3 +34,57 @@ OpponentHand.propTypes = {
 };
 
 export default OpponentHand;
+
+const Container = styled.div.attrs((props) => ({
+  style: {
+    height: props.top ? '150px' : 'auto',
+    width: props.top ? 'auto' : '200px',
+    margin: props.top ? 'auto' : 0,
+  },
+}))``;
+
+const Hand = styled.div.attrs((props) => {
+  const isLeft = props.position === 'left';
+  const isRight = props.position === 'right';
+  const isTop = props.position === 'top';
+
+  return {
+    style: {
+      left: isLeft ? 0 : 'auto',
+      right: isRight ? '20px' : 'auto',
+      marginLeft: isTop ? 'auto' : 0,
+      marginRight: isTop ? 'auto' : 0,
+    },
+  };
+})`
+  position: absolute;
+`;
+
+const StyledAvatar = styled.div.attrs((props) => ({
+  style: {
+    top: 0,
+    marginLeft: props.position === 'top' ? '-120px' : 0,
+    right: props.position === 'right' ? 0 : 'auto',
+  },
+}))`
+  position: absolute;
+`;
+
+const RemainingText = styled.div.attrs((props) => ({
+  style: {
+    marginLeft: '-5px',
+    marginTop: props.position === 'top' ? 0 : '-10px',
+    right: props.position === 'right' ? 0 : 'auto',
+  },
+}))`
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  font-size: 30px;
+  border-radius: 20px;
+  background: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

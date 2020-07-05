@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './Card.module.css';
+import Draggable from '../Draggable/Draggable';
 
 let cx = classNames.bind(styles);
 
@@ -17,12 +18,10 @@ const CHARACTERS = {
   soldier: ['兵', '卒'],
 };
 
-const Card = ({ card, size }) => {
+const Card = ({ card, size, zIndex }) => {
   const { character, color } = card;
 
-  const isGeneral = () => {
-    return character === 'general';
-  };
+  const isGeneral = character === 'general';
 
   const isColor = (c) => {
     return color === c;
@@ -36,7 +35,7 @@ const Card = ({ card, size }) => {
     cardContainer: true,
     [color]: true,
     [size]: true,
-    general: isGeneral(),
+    general: isGeneral,
   });
 
   const charToDisplay =
@@ -54,6 +53,7 @@ const Card = ({ card, size }) => {
 
 Card.defaultProps = {
   size: 'large',
+  zIndex: 0,
 };
 
 Card.propTypes = {
