@@ -1,14 +1,20 @@
 import {
-  SET_ROOM_ERROR,
-  SET_ROOM_INFO,
-  SET_ROOM_SEAT_INFO,
+  SET_PLAYER_ERROR,
+  SET_PLAYER_INFO,
+  UPDATE_PLAYER_INFO,
 } from '../actions/types';
 
 const initialState = {
   loading: false,
-  room: {},
-  currentMessage: null,
-  oldMessages: null,
+  player: {
+    playerName: null,
+    isHost: false,
+    isYourTurn: false,
+    cardForSeat: null,
+    cards: [],
+    meldedCards: [],
+    discardedCards: [],
+  },
   errors: {},
 };
 
@@ -16,28 +22,25 @@ export default function (state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
-    case SET_ROOM_ERROR:
+    case SET_PLAYER_ERROR:
       return {
         ...state,
         errors: payload,
       };
-    case SET_ROOM_INFO:
+    case SET_PLAYER_INFO:
       return {
         ...state,
-        room: {
-          ...state.room,
+        player: {
+          ...state.player,
           ...payload,
         },
       };
-    case SET_ROOM_SEAT_INFO:
+    case UPDATE_PLAYER_INFO:
       return {
         ...state,
-        room: {
-          ...state.room,
-          seats: {
-            ...state.room.seats,
-            ...payload,
-          },
+        player: {
+          ...state.player,
+          ...payload,
         },
       };
     default:

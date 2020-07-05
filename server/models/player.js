@@ -6,6 +6,7 @@ class Player {
     this.cards = cards;
     this.meldedCards = meldedCards;
     this.discardedCards = discardedCards;
+    this.balance = 100;
   }
 }
 

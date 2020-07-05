@@ -10,6 +10,12 @@ class Room {
     this.players = [];
     this.currentPlayerIdx = 0;
     this.gameState = null;
+    this.cardsForSeatSelection = [
+      new Card('general', 'green', 0),
+      new Card('general', 'yellow', 1),
+      new Card('general', 'red', 2),
+      new Card('general', 'white', 3),
+    ];
     this.deckOfCards = Room.DECK_OF_CARDS;
     this.shuffle(this.deckOfCards);
   }
@@ -70,11 +76,26 @@ class Room {
     this.gameState = state;
   }
 
+  // inclusive min, exclusive max [min, max)
+  getARandomNumberInRange(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
   getARandomCard() {
     const min = 0;
     const max = this.deckOfCards.length;
-    const randomIdx = Math.floor(Math.random() * (max - min)) + min;
+    // const randomIdx = Math.floor(Math.random() * (max - min)) + min;
+    const randomIdx = this.getARandomNumberInRange(min, max);
     return this.deckOfCards[randomIdx];
+  }
+
+  getARandomCardForSeatSelection() {
+    const min = 0;
+    const max = this.cardsForSeatSelection.length;
+    const randomIdx = this.getARandomNumberInRange(min, max);
+    const card = this.cardsForSeatSelection.splice(randomIdx, 1);
+    console.log(this.cardsForSeatSelection);
+    return card[0];
   }
 
   deal() {
