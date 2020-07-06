@@ -17,11 +17,3 @@
 .buttonContainer {
   margin-top: 30px;
 }
-
-.chooseSeatContainer {
-  display: flex;
-}
-
-.chooseSeatContainer > div {
-  margin: 10px;
-}

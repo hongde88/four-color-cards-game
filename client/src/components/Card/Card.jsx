@@ -17,7 +17,7 @@ const CHARACTERS = {
   soldier: ['兵', '卒'],
 };
 
-const Card = ({ card, size, zIndex }) => {
+const Card = ({ card, size }) => {
   const { character, color } = card;
 
   const isGeneral = character === 'general';

@@ -12,6 +12,10 @@
   user-select: none;
 }
 
+.cardContainer.small > .innerContainer {
+  height: 90px;
+}
+
 .cardContainer:not(.small) {
   border: 3px solid black;
   padding: 4px;
@@ -23,8 +27,8 @@
 
 .cardContainer.small {
   border: 2px solid black;
-  font-size: 24px;
-  width: 36px;
+  font-size: 18px;
+  width: 30px;
 }
 
 .innerContainer {

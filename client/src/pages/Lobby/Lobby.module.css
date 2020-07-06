@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+
+.table {
+  height: fit-content;
+  min-height: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  margin-top: 20px;
+}
+
+.chooseSeatContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.chooseSeatContainer > div {
+  margin: 10px;
+}
+
+.playersContainer {
+  display: flex;
+}

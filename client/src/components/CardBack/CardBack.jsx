@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components/macro';
 
-const CardBack = ({ degree, size }) => {
+const CardBack = ({ degree, size, absolute }) => {
   return (
-    <Container degree={degree} isSmall={size === 'sm'}>
+    <Container degree={degree} isSmall={size === 'sm'} absolute={absolute}>
       <InnerContainer isSmall={size === 'sm'}></InnerContainer>
     </Container>
   );
@@ -13,11 +13,13 @@ const CardBack = ({ degree, size }) => {
 CardBack.defaultProps = {
   degree: 0,
   size: 'sm',
+  absolute: true,
 };
 
 CardBack.propTypes = {
   degree: PropTypes.number,
   size: PropTypes.string,
+  absolute: PropTypes.bool,
 };
 
 export default CardBack;
@@ -25,10 +27,11 @@ export default CardBack;
 const Container = styled.div.attrs((props) => ({
   style: {
     transform: `rotate(${props.degree}deg)`,
-    width: props.isSmall ? '20px' : '60px',
+    height: props.isSmall ? '90px' : '180px',
+    width: props.isSmall ? '30px' : '60px',
     border: `${props.isSmall ? '2px' : '4px'} solid black`,
     padding: props.isSmall ? '4px' : '8px',
-    position: props.isSmall ? 'absolute' : 'static',
+    position: props.isSmall && props.absolute ? 'absolute' : 'static',
   },
 }))`
   transform-origin: top;
@@ -37,7 +40,7 @@ const Container = styled.div.attrs((props) => ({
 
 const InnerContainer = styled.div.attrs((props) => ({
   style: {
-    height: props.isSmall ? `60px` : `160px`,
+    height: '100%',
     backgroundColor: 'darkred',
   },
 }))``;
