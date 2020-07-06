@@ -3,6 +3,7 @@ import {
   SET_ROOM_ERROR,
   SET_ROOM_INFO,
   SET_ROOM_SEAT_INFO,
+  UPDATE_ROOM_INFO,
 } from './types';
 
 export const joinARoom = (payload) => (dispatch) => {
@@ -19,4 +20,8 @@ export const setRoomInfo = (payload) => (dispatch) => {
 
 export const setRoomSeatInfo = (payload) => (dispatch) => {
   dispatch({ type: SET_ROOM_SEAT_INFO, payload });
+};
+
+export const updateRoomInfo = (payload) => (dispatch) => {
+  dispatch({ type: UPDATE_ROOM_INFO, payload });
 };

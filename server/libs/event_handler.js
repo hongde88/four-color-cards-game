@@ -23,6 +23,12 @@ class EventHandler {
       this.handlePickACardForSeatSelectionEvent()
     );
 
+    // pick a card for priority handler
+    this.socket.on(
+      'pick a card for priority',
+      this.handlePickACardForPriorityEvent()
+    );
+
     // disconnect handler
     this.socket.on(
       'disconnect',
@@ -54,11 +60,20 @@ class EventHandler {
       data.avatarIndex = data.avatarIndex || 0;
 
       // room id doesn't exist
-      if (!rooms[data.roomId]) {
+      if (!data.roomId) {
         // this.socket.playerName = data.playerName;
         data.roomId = randomString.generate(9);
         // this.socket.roomId = data.roomId;
         rooms[data.roomId] = new Room(data.roomId);
+      }
+
+      if (!rooms[data.roomId]) {
+        return callback
+          ? callback({
+              type: 'room error',
+              message: 'room does not exist',
+            })
+          : null;
       }
 
       this.socket.playerName = data.playerName;
@@ -113,13 +128,43 @@ class EventHandler {
     return (data, callback) => {
       const roomId = data.roomId || this.socket.roomId;
       const playerName = data.playerName || this.socket.playerName;
+      const cardForSeatIdx = data.cardForSeatIdx || 0;
 
       if (roomId && rooms[roomId]) {
-        const response = {
-          cardForSeat: rooms[roomId].getARandomCardForSeatSelection(),
-          playerName,
-        };
-        this.io.to(roomId).emit('a card picked for seat selection', response);
+        const room = rooms[roomId];
+        // check if all players have selected their seats
+        if (room.currentSeatPickerIdx < room.priorities.length) {
+          const cardForSeat = room.getARandomCardForSeatSelection();
+          const cardPicker = room.players.find(
+            (player) => player.name === playerName
+          );
+          room.seats[cardForSeat.color] = cardPicker;
+          cardPicker.seatCard = cardForSeat;
+          const response = {
+            cardForSeat,
+            playerName,
+            playerAvatarIndex: cardPicker.avatarIndex,
+            cardForSeatIdx,
+          };
+
+          this.io.to(roomId).emit('a card picked for seat selection', response);
+
+          room.currentSeatPickerIdx++;
+          if (room.currentSeatPickerIdx < room.priorities.length) {
+            this.io.to(roomId).emit('update room info', {
+              currentSeatPickerIdx: room.currentSeatPickerIdx,
+              currentSeatPicker:
+                room.priorities[room.currentSeatPickerIdx].name,
+            });
+          } else {
+            room.currentSeatPicker = null;
+            this.io.to(roomId).emit('update room info', {
+              currentSeatPickerIdx: null,
+              currentSeatPicker: null,
+            });
+          }
+        }
+
         return callback ? callback(response) : null;
       }
     };
@@ -178,6 +223,50 @@ class EventHandler {
         this.socket.leave(roomId);
         this.socket.roomId = null;
         this.socket.playerName = null;
+      }
+    };
+  }
+
+  handlePickACardForPriorityEvent() {
+    return (data) => {
+      const playerName = data.playerName || this.socket.playerName;
+      const roomId = data.roomId || this.socket.roomId;
+
+      if (roomId && rooms[roomId]) {
+        const room = rooms[roomId];
+        const card = room.getARandomCard();
+        const player = room.players.find(
+          (player) => player.name === playerName
+        );
+        player.priorityCard = card;
+        player.priority = card.rank;
+        room.priorities = [...room.players].sort(
+          (player1, player2) => player2.priority - player1.priority
+        );
+        this.io.to(roomId).emit('update room info', room);
+        this.socket.emit('update player info', {
+          priorityCard: card,
+          priority: card.rank,
+        });
+
+        if (
+          room.priorities &&
+          room.priorities.length === 4 &&
+          !room.priorities.some((player) => player.priority === null)
+        ) {
+          room.gameStarter = room.priorities[0];
+          setTimeout(() => {
+            room.gameState = 'picking seats';
+            room.currentSeatPickerIdx = 0;
+            this.io.to(roomId).emit('update room info', {
+              gameState: room.gameState,
+              currentSeatPickerIdx: room.currentSeatPickerIdx,
+              currentSeatPicker:
+                room.priorities[room.currentSeatPickerIdx].name,
+              gameStarter: room.gameStarter,
+            });
+          }, 100);
+        }
       }
     };
   }

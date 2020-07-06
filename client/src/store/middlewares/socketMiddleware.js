@@ -3,10 +3,12 @@ import {
   OPEN_SOCKET,
   JOIN_A_ROOM,
   PICK_A_CARD_FOR_SEAT,
-  SET_ROOM_SEAT_INFO,
+  PICK_A_CARD_FOR_PRIORITY,
 } from '../actions/types';
 
 import { setRoomError, setRoomInfo, setRoomSeatInfo } from '../actions/room';
+
+import { updateRoomInfo } from '../actions/room';
 
 import {
   setPlayerError,
@@ -49,12 +51,23 @@ const socketMiddleware = (store) => (next) => async (action) => {
         socket.on('a card picked for seat selection', (response) => {
           store.dispatch(
             setRoomSeatInfo({
-              [response.playerName]: response.cardForSeat,
+              [response.cardForSeat.color]: {
+                playerName: response.playerName,
+                playerAvatarIndex: response.playerAvatarIndex,
+                cardForSeat: response.cardForSeat,
+                cardForSeatIdx: response.cardForSeatIdx,
+              },
             })
           );
         });
         socket.on('room joined', (response) => {
           store.dispatch(setRoomInfo(response));
+        });
+        socket.on('update room info', (response) => {
+          store.dispatch(updateRoomInfo(response));
+        });
+        socket.on('update player info', (response) => {
+          store.dispatch(updatePlayerInfo(response));
         });
       }
       break;
@@ -73,6 +86,8 @@ const socketMiddleware = (store) => (next) => async (action) => {
                 message: response.message,
               })
             );
+          } else {
+            store.dispatch(setPlayerInfo(response));
           }
         });
       }
@@ -80,6 +95,11 @@ const socketMiddleware = (store) => (next) => async (action) => {
     case PICK_A_CARD_FOR_SEAT:
       if (socket) {
         socket.emit('pick a card for seat selection', action.payload);
+      }
+      break;
+    case PICK_A_CARD_FOR_PRIORITY:
+      if (socket) {
+        socket.emit('pick a card for priority', action.payload);
       }
       break;
     default:

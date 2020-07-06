@@ -2,11 +2,14 @@ import {
   SET_ROOM_ERROR,
   SET_ROOM_INFO,
   SET_ROOM_SEAT_INFO,
+  UPDATE_ROOM_INFO,
 } from '../actions/types';
 
 const initialState = {
   loading: false,
-  room: {},
+  room: {
+    seats: {},
+  },
   currentMessage: null,
   oldMessages: null,
   errors: {},
@@ -38,6 +41,14 @@ export default function (state = initialState, action) {
             ...state.room.seats,
             ...payload,
           },
+        },
+      };
+    case UPDATE_ROOM_INFO:
+      return {
+        ...state,
+        room: {
+          ...state.room,
+          ...payload,
         },
       };
     default:

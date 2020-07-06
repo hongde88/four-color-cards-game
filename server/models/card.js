@@ -9,19 +9,28 @@ class Card {
     'soldier',
   ];
 
-  static COLORS = ['green', 'red', 'yellow', 'white'];
+  static COLORS = ['green', 'yellow', 'red', 'white'];
 
-  constructor(character, color, index) {
+  constructor(character, color, rank) {
     this.character = character;
     this.color = color;
-    this.index = index;
+    this.rank = rank;
+  }
+
+  equals(otherCard) {
+    return (
+      otherCard &&
+      this.character === otherCard.character &&
+      this.color === otherCard.color &&
+      this.rank === otherCard.rank
+    );
   }
 
   toJSON() {
     return {
       character: this.character,
       color: this.color,
-      index: this.index,
+      rank: this.rank,
     };
   }
 }

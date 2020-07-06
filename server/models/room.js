@@ -1,8 +1,10 @@
 const Player = require('./player').Player;
 const Card = require('./card');
+const cardsForSeatSelection = Symbol('cardsForSeatSelection');
 
 class Room {
   static DECK_OF_CARDS = Room.generateDeckOfCards();
+  static UNIQUE_CARDS = Room.generateUniqueCards();
 
   constructor(roomId) {
     this.roomId = roomId;
@@ -10,24 +12,49 @@ class Room {
     this.players = [];
     this.currentPlayerIdx = 0;
     this.gameState = null;
-    this.cardsForSeatSelection = [
+    this[cardsForSeatSelection] = [
       new Card('general', 'green', 0),
       new Card('general', 'yellow', 1),
       new Card('general', 'red', 2),
       new Card('general', 'white', 3),
     ];
     this.deckOfCards = Room.DECK_OF_CARDS;
+    this.priorities = [];
+    this.currentSeatPickerIdx = null;
+    this.currentSeatPicker = null;
+    this.seats = {
+      green: null,
+      red: null,
+      white: null,
+      yellow: null,
+    };
+    this.gameStarter = null;
     this.shuffle(this.deckOfCards);
   }
 
   static generateDeckOfCards() {
     const cards = [];
+    const totalCards = Card.CHARACTERS.length * Card.COLORS.length * 4;
     let idx = 0;
     Card.CHARACTERS.forEach((character) =>
       Card.COLORS.forEach((color) => {
         for (let i = 0; i < 4; i++) {
-          cards.push(new Card(character, color, idx++));
+          cards.push(new Card(character, color, totalCards - idx));
         }
+        idx++;
+      })
+    );
+    return cards;
+  }
+
+  static generateUniqueCards() {
+    const cards = [];
+    const totalCards = Card.CHARACTERS.length * Card.COLORS.length * 4;
+    let idx = 0;
+    Card.CHARACTERS.forEach((character) =>
+      Card.COLORS.forEach((color) => {
+        cards.push(new Card(character, color, totalCards - idx));
+        idx++;
       })
     );
     return cards;
@@ -45,7 +72,7 @@ class Room {
   }
 
   acceptPlayer(name, avatarIdx, socketId) {
-    if (this.players.length > 4) {
+    if (this.players.length >= 4) {
       return false;
     } else {
       if (this.players.length === 0) {
@@ -83,18 +110,26 @@ class Room {
 
   getARandomCard() {
     const min = 0;
-    const max = this.deckOfCards.length;
-    // const randomIdx = Math.floor(Math.random() * (max - min)) + min;
-    const randomIdx = this.getARandomNumberInRange(min, max);
-    return this.deckOfCards[randomIdx];
+    const max = Room.UNIQUE_CARDS.length;
+
+    let randomIdx = null;
+    let randomCard = null;
+
+    do {
+      randomIdx = this.getARandomNumberInRange(min, max);
+      randomCard = Room.UNIQUE_CARDS[randomIdx];
+    } while (
+      this.priorities.find((player) => randomCard.equals(player.priorityCard))
+    );
+
+    return randomCard;
   }
 
   getARandomCardForSeatSelection() {
     const min = 0;
-    const max = this.cardsForSeatSelection.length;
+    const max = this[cardsForSeatSelection].length;
     const randomIdx = this.getARandomNumberInRange(min, max);
-    const card = this.cardsForSeatSelection.splice(randomIdx, 1);
-    console.log(this.cardsForSeatSelection);
+    const card = this[cardsForSeatSelection].splice(randomIdx, 1);
     return card[0];
   }
 
