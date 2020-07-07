@@ -180,7 +180,7 @@ const Game = () => {
               <GameAction
                 hand={hand.slice(0, 20)}
                 card={hand[20]}
-                state={'choose seat'}
+                state={'choose'}
               />
             </Col>
             <Col
@@ -203,10 +203,10 @@ const Game = () => {
         </Col>
       </Row>
       <Row noGutters className={`${styles.bottom} justify-content-between`}>
-        <div className="hand">
+        <div className={styles.hand}>
           <Hand cards={hand.slice(0, 21)} melded={players[0].melded} />
         </div>
-        <div className="melded">
+        <div className={styles.melded}>
           <Melded groupOfCards={players[0].melded} position="bottom" />
         </div>
       </Row>

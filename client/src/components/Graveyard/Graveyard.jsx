@@ -13,7 +13,6 @@ const Graveyard = ({ cards, position }) => {
           <div
             key={`card_${position}_${index}`}
             style={{
-              zIndex: -100 + index,
               position: 'absolute',
               marginLeft: 25 * column,
               marginTop: 50 * row,

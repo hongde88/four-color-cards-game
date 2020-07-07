@@ -17,7 +17,6 @@
 .mid-center {
   width: calc(100% - 280px);
   background: beige;
-  z-index: -1;
 }
 
 .mid-center-row {

@@ -10,10 +10,12 @@
   left: 0;
 
   height: 100%;
-
-  font-size: 32px;
 }
 
 .buttonContainer {
   margin-top: 30px;
+}
+
+.buttonContainer > button {
+  margin: 2px;
 }

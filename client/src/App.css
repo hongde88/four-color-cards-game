@@ -5,6 +5,10 @@ body {
   margin: 0;
 }
 
+#root {
+  height: 100%;
+}
+
 .btn-icon.focus,
 .btn-icon:focus {
   outline: 0;
