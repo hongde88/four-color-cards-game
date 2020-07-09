@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardBack from '../../components/CardBack/CardBack';
 import styles from './Lobby.module.css';
@@ -14,13 +14,13 @@ import {
 
 const Lobby = () => {
   const dispatch = useDispatch();
-  const playerName = useSelector((state) => state.player.player.playerName);
+  const playerName = useSelector((state) => state.player.player.name);
   const gameState = useSelector((state) => state.room.room.gameState);
   const currentSeatPicker = useSelector(
     (state) => state.room.room.currentSeatPicker
   );
   const playerPriorityCard = useSelector(
-    (state) => state.player.player.priorityCard
+    (state) => state.player.cards.priorityCard
   );
   const roomId = useSelector((state) => state.room.room.roomId);
   const PLAYERS = useSelector((state) => state.room.room.players);
@@ -53,7 +53,11 @@ const Lobby = () => {
         <h1>Bốc đi trước</h1>
         <div className={styles.priorityCards}>
           {range(30).map((index) => (
-            <PriorityCard marginLeft={index * 30} onClick={updatePriorities}>
+            <PriorityCard
+              key={index}
+              marginLeft={index * 30}
+              onClick={updatePriorities}
+            >
               <CardBack size="lg" />
             </PriorityCard>
           ))}
@@ -79,11 +83,11 @@ const Lobby = () => {
       {seats.green &&
         createAvatar(seats.green.playerName, seats.green.playerAvatarIndex)}
       <div className={styles.chooseSeatContainer}>
-        {seats.yellow === null && <ColoredSquare color={'yellow'} />}
-        {seats.yellow &&
-          createAvatar(seats.yellow.playerName, seats.yellow.playerAvatarIndex)}
+        {seats.white === null && <ColoredSquare color={'white'} />}
+        {seats.white &&
+          createAvatar(seats.white.playerName, seats.white.playerAvatarIndex)}
         {range(4).map((index) => (
-          <div onClick={() => pickASeat(index)}>
+          <div key={index} onClick={() => pickASeat(index)}>
             {!seatCards[index] ? (
               <CardBack
                 key={`back_${index}`}
@@ -95,13 +99,13 @@ const Lobby = () => {
             )}
           </div>
         ))}
-        {seats.red === null && <ColoredSquare color={'red'} />}
-        {seats.red &&
-          createAvatar(seats.red.playerName, seats.red.playerAvatarIndex)}
+        {seats.yellow === null && <ColoredSquare color={'yellow'} />}
+        {seats.yellow &&
+          createAvatar(seats.yellow.playerName, seats.yellow.playerAvatarIndex)}
       </div>
-      {seats.white === null && <ColoredSquare color={'white'} />}
-      {seats.white &&
-        createAvatar(seats.white.playerName, seats.white.playerAvatarIndex)}
+      {seats.red === null && <ColoredSquare color={'red'} />}
+      {seats.red &&
+        createAvatar(seats.red.playerName, seats.red.playerAvatarIndex)}
     </div>
   );
 
@@ -111,7 +115,7 @@ const Lobby = () => {
 
   const players = PLAYERS.map((player, index) => {
     return (
-      <>
+      <React.Fragment key={index}>
         {/* <Avatar name={player.name} index={player.avatarIndex} small={true} /> */}
         {createAvatar(player.name, player.avatarIndex)}
         {player.priority === null ? (
@@ -119,7 +123,7 @@ const Lobby = () => {
         ) : (
           <Card card={player.priorityCard} size="small" />
         )}
-      </>
+      </React.Fragment>
     );
   });
 

@@ -1,20 +1,38 @@
 import { inRange } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 // import styles from './Hand.module.css';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/macro';
 import Card from '../Card/Card';
 import Draggable from '../Draggable/Draggable';
+import { updatePlayerCardOrder } from '../../store/actions/player';
+import { setRoomCurrentPlayerSelectedCard } from '../../store/actions/room';
 
 const WIDTH = 30;
 
 const Hand = ({ cards }) => {
-  cards.forEach((card, index) => (card.id = index));
+  const dispatch = useDispatch();
+
   const [state, setState] = useState({
     order: cards,
     dragOrder: cards,
     draggedIndex: null,
   });
+
+  useEffect(() => {
+    if (state.dragOrder) {
+      dispatch(updatePlayerCardOrder({ cards: state.dragOrder }));
+    }
+  }, [state.dragOrder]);
+
+  const onClick = (card, isDragging) => {
+    if (card && !isDragging) {
+      dispatch(
+        setRoomCurrentPlayerSelectedCard({ currentPlayerSelectedCard: card })
+      );
+    }
+  };
 
   const handleDrag = useCallback(
     ({ translation, id }) => {
@@ -38,8 +56,6 @@ const Hand = ({ cards }) => {
   );
 
   const handleDragEnd = useCallback(() => {
-    state.dragOrder.forEach((c, index) => (c.zIndex = index));
-
     setState((state) => ({
       ...state,
       order: state.dragOrder,
@@ -70,6 +86,7 @@ const Hand = ({ cards }) => {
                 key={`card_${card.id}`}
                 left={isDragging ? draggedLeft : left}
                 isDragging={isDragging}
+                onClick={() => onClick(card, isDragging)}
               >
                 <Card card={card} />
               </CardContainer>
@@ -83,7 +100,6 @@ const Hand = ({ cards }) => {
 
 Hand.propTypes = {
   cards: PropTypes.array.isRequired,
-  melded: PropTypes.array.isRequired,
 };
 
 export default Hand;

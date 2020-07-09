@@ -3,14 +3,13 @@ const Card = require('./card');
 const cardsForSeatSelection = Symbol('cardsForSeatSelection');
 
 class Room {
-  static DECK_OF_CARDS = Room.generateDeckOfCards();
   static UNIQUE_CARDS = Room.generateUniqueCards();
 
   constructor(roomId) {
     this.roomId = roomId;
     this.host = null;
     this.players = [];
-    this.currentPlayerIdx = 0;
+    this.currentPlayer = null;
     this.gameState = null;
     this[cardsForSeatSelection] = [
       new Card('general', 'green', 0),
@@ -18,28 +17,31 @@ class Room {
       new Card('general', 'red', 2),
       new Card('general', 'white', 3),
     ];
-    this.deckOfCards = Room.DECK_OF_CARDS;
+    this.deckOfCards = this.generateDeckOfCards();
     this.priorities = [];
     this.currentSeatPickerIdx = null;
     this.currentSeatPicker = null;
     this.seats = {
       green: null,
+      yellow: null,
       red: null,
       white: null,
-      yellow: null,
     };
-    this.gameStarter = null;
+    this.currentPlayerSelectedCard = null;
+    this.currentPlayerFinalCard = null;
+    this.cardsRemainingInDeck = this.deckOfCards.length;
     this.shuffle(this.deckOfCards);
   }
 
-  static generateDeckOfCards() {
+  generateDeckOfCards() {
     const cards = [];
     const totalCards = Card.CHARACTERS.length * Card.COLORS.length * 4;
+    let cardIdx = totalCards;
     let idx = 0;
     Card.CHARACTERS.forEach((character) =>
       Card.COLORS.forEach((color) => {
         for (let i = 0; i < 4; i++) {
-          cards.push(new Card(character, color, totalCards - idx));
+          cards.push(new Card(character, color, totalCards - idx, cardIdx--));
         }
         idx++;
       })
@@ -145,6 +147,18 @@ class Room {
     }
 
     return piles;
+  }
+
+  toJSON() {
+    return {
+      roomId: this.roomId,
+      host: this.host,
+      players: this.players,
+      gameState: this.gameState,
+      currentSeatPicker: this.currentSeatPicker,
+      seats: this.seats,
+      cardsRemainingInDeck: this.cardsRemainingInDeck,
+    };
   }
 }
 

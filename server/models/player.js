@@ -4,12 +4,28 @@ class Player {
     this.avatarIndex = avatarIndex;
     this.socketId = socketId;
     this.cards = cards;
-    this.meldedCards = meldedCards;
-    this.discardedCards = discardedCards;
+    this.melded = meldedCards;
+    this.discarded = discardedCards;
     this.priorityCard = null;
     this.priority = null;
     this.seatCard = null;
+    this.adjacentPlayer = null;
     this.balance = 100;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      avatarIndex: this.avatarIndex,
+      cardsRemaining: this.cards.length,
+      priorityCard: this.priorityCard,
+      priority: this.priority,
+      melded: this.melded,
+      discarded: this.discarded,
+      adjacentPlayer: this.adjacentPlayer
+        ? this.adjacentPlayer.name
+        : this.adjacentPlayer,
+    };
   }
 }
 

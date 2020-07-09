@@ -35,6 +35,18 @@ class EventHandler {
       this.handleDisconnectOrLeaveEvent('disconnect')
     );
 
+    // set room current player selected card handler
+    this.socket.on(
+      'set room current player selected card',
+      this.handleSetRoomCurrentPlayerSelectedCardEvent()
+    );
+
+    // set room current player final card handler
+    this.socket.on(
+      'set room current player final card',
+      this.handleSetRoomCurrentPlayerFinalCardEvent()
+    );
+
     // leave handler
     this.socket.on('leave a room', this.handleDisconnectOrLeaveEvent('leave'));
   }
@@ -102,11 +114,13 @@ class EventHandler {
 
       if (joined) {
         this.socket.join(data.roomId);
-        this.io.to(data.roomId).emit('room joined', rooms[data.roomId]);
+        this.io
+          .to(data.roomId)
+          .emit('room joined', rooms[data.roomId].toJSON());
 
         return callback
           ? callback({
-              playerName: data.playerName,
+              name: data.playerName,
               isHost: data.playerName === rooms[data.roomId].host,
             })
           : null;
@@ -162,6 +176,56 @@ class EventHandler {
               currentSeatPickerIdx: null,
               currentSeatPicker: null,
             });
+
+            // Set adjacent players
+            room.seats['green'].adjacentPlayer = room.seats['yellow'];
+            room.seats['yellow'].adjacentPlayer = room.seats['red'];
+            room.seats['red'].adjacentPlayer = room.seats['white'];
+            room.seats['white'].adjacentPlayer = room.seats['green'];
+
+            // Get players in the right order
+            const firstPlayer = room.priorities[0];
+            const secondPlayer = firstPlayer.adjacentPlayer;
+            const thirdPlayer = secondPlayer.adjacentPlayer;
+            const fourthPlayer = thirdPlayer.adjacentPlayer;
+
+            // Deal cards
+            const piles = room.deal();
+            firstPlayer.cards = piles[0];
+            secondPlayer.cards = piles[1];
+            thirdPlayer.cards = piles[2];
+            fourthPlayer.cards = piles[3];
+
+            // Done picking seats. Start the game
+            room.gameState = 'starting';
+            room.cardsRemainingInDeck = room.deckOfCards.length;
+            this.io.to(roomId).emit('update room info', room.toJSON());
+
+            // Send dealt cards to players
+            this.io.to(firstPlayer.socketId).emit('update player info', {
+              cards: firstPlayer.cards,
+            });
+
+            this.io.to(secondPlayer.socketId).emit('update player info', {
+              cards: secondPlayer.cards,
+            });
+
+            this.io.to(thirdPlayer.socketId).emit('update player info', {
+              cards: thirdPlayer.cards,
+            });
+
+            this.io.to(fourthPlayer.socketId).emit('update player info', {
+              cards: fourthPlayer.cards,
+            });
+
+            setTimeout(() => {
+              const gameStarterName = room.priorities[0].name;
+              room.currentPlayer = room.priorities[0];
+              this.io.to(roomId).emit('update room info', {
+                action: `${gameStarterName}, place a card to start the game`,
+                turnPlayerName: gameStarterName,
+              });
+            }, 1000);
           }
         }
 
@@ -254,19 +318,65 @@ class EventHandler {
           room.priorities.length === 4 &&
           !room.priorities.some((player) => player.priority === null)
         ) {
-          room.gameStarter = room.priorities[0];
           setTimeout(() => {
             room.gameState = 'picking seats';
             room.currentSeatPickerIdx = 0;
             this.io.to(roomId).emit('update room info', {
               gameState: room.gameState,
-              currentSeatPickerIdx: room.currentSeatPickerIdx,
               currentSeatPicker:
                 room.priorities[room.currentSeatPickerIdx].name,
-              gameStarter: room.gameStarter,
             });
           }, 100);
         }
+      }
+    };
+  }
+
+  handleSetRoomCurrentPlayerSelectedCardEvent() {
+    return (data) => {
+      const roomId = this.socket.roomId;
+
+      if (roomId && rooms[roomId]) {
+        rooms[roomId].currentPlayerSelectedCard =
+          data.currentPlayerSelectedCard;
+        this.io.to(roomId).emit('update room info', data);
+      }
+    };
+  }
+
+  handleSetRoomCurrentPlayerFinalCardEvent() {
+    return (data) => {
+      const roomId = this.socket.roomId;
+
+      if (roomId && rooms[roomId]) {
+        if (
+          data.currentPlayerFinalCard &&
+          data.currentPlayerFinalCard.character === 'general'
+        ) {
+          // don't allow users to place a general card
+          return this.socket.emit('update room info', {
+            action:
+              'Please place another card because general cards are not placeable',
+          });
+        }
+
+        rooms[roomId].currentPlayerFinalCard = data.currentPlayerFinalCard;
+        rooms[roomId].currentPlayer.cards = data.currentPlayerCards;
+        rooms[roomId].currentPlayer.cards.splice(
+          data.currentPlayerFinalCardIdx,
+          1
+        );
+
+        rooms[roomId].currentPlayer.discarded.push(data.currentPlayerFinalCard);
+        this.io.to(roomId).emit('update room info', {
+          ...rooms[roomId].toJSON(),
+          currentPlayerFinalCard: data.currentPlayerFinalCard,
+        });
+        this.socket.emit('update player info', {
+          cards: rooms[roomId].currentPlayer.cards,
+          melded: rooms[roomId].currentPlayer.melded,
+          discarded: rooms[roomId].currentPlayer.discarded,
+        });
       }
     };
   }

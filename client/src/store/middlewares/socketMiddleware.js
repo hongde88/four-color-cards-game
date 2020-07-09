@@ -4,6 +4,8 @@ import {
   JOIN_A_ROOM,
   PICK_A_CARD_FOR_SEAT,
   PICK_A_CARD_FOR_PRIORITY,
+  SET_ROOM_CURRENT_PLAYER_SELECTED_CARD,
+  SET_ROOM_CURRENT_PLAYER_FINAL_CARD,
 } from '../actions/types';
 
 import { setRoomError, setRoomInfo, setRoomSeatInfo } from '../actions/room';
@@ -100,6 +102,16 @@ const socketMiddleware = (store) => (next) => async (action) => {
     case PICK_A_CARD_FOR_PRIORITY:
       if (socket) {
         socket.emit('pick a card for priority', action.payload);
+      }
+      break;
+    case SET_ROOM_CURRENT_PLAYER_SELECTED_CARD:
+      if (socket) {
+        socket.emit('set room current player selected card', action.payload);
+      }
+      break;
+    case SET_ROOM_CURRENT_PLAYER_FINAL_CARD:
+      if (socket) {
+        socket.emit('set room current player final card', action.payload);
       }
       break;
     default:

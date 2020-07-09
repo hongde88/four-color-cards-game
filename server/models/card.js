@@ -11,10 +11,11 @@ class Card {
 
   static COLORS = ['green', 'yellow', 'red', 'white'];
 
-  constructor(character, color, rank) {
+  constructor(character, color, rank, id) {
     this.character = character;
     this.color = color;
     this.rank = rank;
+    this.id = id;
   }
 
   equals(otherCard) {
@@ -31,6 +32,7 @@ class Card {
       character: this.character,
       color: this.color,
       rank: this.rank,
+      id: this.id,
     };
   }
 }

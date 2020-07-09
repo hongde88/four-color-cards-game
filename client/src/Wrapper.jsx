@@ -7,7 +7,7 @@ import Lobby from './pages/Lobby/Lobby';
 import { useSelector } from 'react-redux';
 
 const Wrapper = () => {
-  const playerName = useSelector((state) => state.player.player.playerName);
+  const playerName = useSelector((state) => state.player.player.name);
   const room = useSelector((state) => state.room.room);
 
   return (
@@ -22,7 +22,7 @@ const Wrapper = () => {
           </Row>
         </>
       )}
-      {room.roomId && (
+      {room.roomId && room.gameState !== 'starting' && (
         <>
           <Row noGutters className="justify-content-center">
             <Logo size="sm" />
@@ -33,6 +33,7 @@ const Wrapper = () => {
         </>
       )}
       {room.roomId && room.gameState === 'starting' && <Game />}
+      {/* <Game /> */}
     </>
   );
 };

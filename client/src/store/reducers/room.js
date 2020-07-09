@@ -25,6 +25,7 @@ export default function (state = initialState, action) {
         errors: payload,
       };
     case SET_ROOM_INFO:
+    case UPDATE_ROOM_INFO:
       return {
         ...state,
         room: {
@@ -41,14 +42,6 @@ export default function (state = initialState, action) {
             ...state.room.seats,
             ...payload,
           },
-        },
-      };
-    case UPDATE_ROOM_INFO:
-      return {
-        ...state,
-        room: {
-          ...state.room,
-          ...payload,
         },
       };
     default:

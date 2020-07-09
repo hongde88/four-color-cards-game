@@ -2,18 +2,21 @@ import {
   SET_PLAYER_ERROR,
   SET_PLAYER_INFO,
   UPDATE_PLAYER_INFO,
+  UPDATE_PLAYER_CARD_ORDER,
 } from '../actions/types';
 
 const initialState = {
   loading: false,
   player: {
-    playerName: null,
+    name: null,
     isHost: false,
     isYourTurn: false,
     cardForSeat: null,
+  },
+  cards: {
     cards: [],
-    meldedCards: [],
-    discardedCards: [],
+    melded: [],
+    discarded: [],
   },
   errors: {},
 };
@@ -35,11 +38,12 @@ export default function (state = initialState, action) {
           ...payload,
         },
       };
+    case UPDATE_PLAYER_CARD_ORDER:
     case UPDATE_PLAYER_INFO:
       return {
         ...state,
-        player: {
-          ...state.player,
+        cards: {
+          ...state.cards,
           ...payload,
         },
       };

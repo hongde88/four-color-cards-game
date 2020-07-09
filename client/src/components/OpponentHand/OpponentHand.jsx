@@ -21,7 +21,7 @@ const OpponentHand = ({ position, player }) => {
       <Melded groupOfCards={player.melded} position={position} />
       <RemainingText position={position}>{player.cardsRemaining}</RemainingText>
       <StyledAvatar position={position}>
-        <Avatar name={player.name} index={player.index} small={true} />
+        <Avatar name={player.name} index={player.avatarIndex} small={true} />
       </StyledAvatar>
     </Container>
   );

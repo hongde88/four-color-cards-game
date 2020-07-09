@@ -4,6 +4,7 @@ import {
   SET_PLAYER_INFO,
   UPDATE_PLAYER_INFO,
   PICK_A_CARD_FOR_PRIORITY,
+  UPDATE_PLAYER_CARD_ORDER,
 } from './types';
 
 export const playerPickACardForSeat = (payload) => (dispatch) => {
@@ -24,4 +25,8 @@ export const setPlayerInfo = (payload) => (dispatch) => {
 
 export const updatePlayerInfo = (payload) => (dispatch) => {
   dispatch({ type: UPDATE_PLAYER_INFO, payload });
+};
+
+export const updatePlayerCardOrder = (payload) => (dispatch) => {
+  dispatch({ type: UPDATE_PLAYER_CARD_ORDER, payload });
 };
