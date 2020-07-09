@@ -1,5 +1,5 @@
 import React from 'react';
-import CardBack from '../CardBack/CardBack';
+import Card from '../Card/Card';
 import PropTypes from 'prop-types';
 import Avatar from '../Avatar/Avatar';
 import Melded from '../Melded/Melded';
@@ -12,7 +12,14 @@ const OpponentHand = ({ position, player }) => {
   const negative = position === 'right' ? -1 : 1;
 
   for (let i = 0; i < 19; i++) {
-    hand.push(<CardBack key={i} degree={degree + 10 * i * negative} />);
+    hand.push(
+      <Card
+        key={i}
+        degree={degree + 10 * i * negative}
+        absolute={true}
+        size="sm"
+      />
+    );
   }
 
   return (
@@ -36,8 +43,8 @@ export default OpponentHand;
 
 const Container = styled.div.attrs((props) => ({
   style: {
-    height: props.top ? '150px' : 'auto',
-    width: props.top ? 'auto' : '200px',
+    height: props.top ? 150 : 'auto',
+    width: props.top ? 'auto' : 200,
     margin: props.top ? 'auto' : 0,
   },
 }))``;
@@ -50,9 +57,10 @@ const Hand = styled.div.attrs((props) => {
   return {
     style: {
       left: isLeft ? 0 : 'auto',
-      right: isRight ? '20px' : 'auto',
+      right: isRight ? 28 : 'auto',
       marginLeft: isTop ? 'auto' : 0,
       marginRight: isTop ? 'auto' : 0,
+      bottom: props.position === 'top' ? 'auto' : '50%',
     },
   };
 })`
@@ -61,11 +69,12 @@ const Hand = styled.div.attrs((props) => {
 
 const StyledAvatar = styled.div.attrs((props) => ({
   style: {
-    top: 0,
-    marginLeft: props.position === 'top' ? '-120px' : 0,
+    top: props.position === 'top' ? 0 : 'auto',
+    bottom: props.position === 'top' ? 'auto' : '50%',
+    marginLeft: props.position === 'top' ? -80 : 0,
     right: props.position === 'right' ? 0 : 'auto',
     marginTop:
-      props.position === 'left' || props.position === 'right' ? '-120px' : 0,
+      props.position === 'left' || props.position === 'right' ? -120 : 0,
   },
 }))`
   position: absolute;
@@ -73,8 +82,9 @@ const StyledAvatar = styled.div.attrs((props) => ({
 
 const RemainingText = styled.div.attrs((props) => ({
   style: {
-    marginLeft: '-5px',
-    marginTop: props.position === 'top' ? 0 : '-20px',
+    bottom: props.position === 'top' ? 'auto' : '50%',
+    marginBottom: props.position === 'top' ? 0 : -20,
+    marginLeft: props.position === 'top' ? -10 : 0,
     right: props.position === 'right' ? 0 : 'auto',
   },
 }))`

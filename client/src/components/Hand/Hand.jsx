@@ -2,7 +2,7 @@ import { inRange } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 // import styles from './Hand.module.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 import Card from '../Card/Card';
 import Draggable from '../Draggable/Draggable';
@@ -13,6 +13,10 @@ const WIDTH = 30;
 
 const Hand = ({ cards }) => {
   const dispatch = useDispatch();
+
+  const currentPlayerSelectedCard = useSelector(
+    (state) => state.room.room.currentPlayerSelectedCard
+  );
 
   const [state, setState] = useState({
     order: cards,
@@ -88,7 +92,16 @@ const Hand = ({ cards }) => {
                 isDragging={isDragging}
                 onClick={() => onClick(card, isDragging)}
               >
-                <Card card={card} />
+                <Card
+                  card={card}
+                  size="lg"
+                  marginTop={
+                    currentPlayerSelectedCard &&
+                    currentPlayerSelectedCard.id === card.id
+                      ? -20
+                      : 0
+                  }
+                />
               </CardContainer>
             </Draggable>
           );
@@ -118,6 +131,4 @@ const CardContainer = styled.div.attrs((props) => ({
   position: absolute;
 `;
 
-const Cards = styled.div`
-  position: absolute;
-`;
+const Cards = styled.div``;

@@ -33,7 +33,6 @@ const Wrapper = () => {
         </>
       )}
       {room.roomId && room.gameState === 'starting' && <Game />}
-      {/* <Game /> */}
     </>
   );
 };

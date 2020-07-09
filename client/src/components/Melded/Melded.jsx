@@ -29,7 +29,7 @@ const Melded = ({ groupOfCards, position }) => {
                   marginTop={isLeftOrRight ? groupIndex * 50 : 0}
                   marginRight={position === 'right' ? cardIndex * 20 : 'auto'}
                 >
-                  <Card card={card} size="small" />
+                  <Card card={card} size="md" />
                 </CardContainer>
               );
             })}
@@ -55,9 +55,9 @@ const Container = styled.div.attrs((props) => {
   const topOrBottom = props.position === 'top' || props.position === 'bottom';
   return {
     style: {
-      marginTop: topOrBottom ? 0 : '100px',
-      marginLeft: props.position === 'top' ? '100px' : 0,
-      height: topOrBottom ? '110px' : '200px',
+      marginTop: topOrBottom ? 0 : '-120px',
+      marginLeft: props.position === 'top' ? '50px' : 0,
+      height: topOrBottom ? '110px' : '50%',
       minWidth: topOrBottom ? '300px' : '120px',
       right: props.position === 'right' ? 0 : 'auto',
       overflowY: topOrBottom ? 'hidden' : 'auto',

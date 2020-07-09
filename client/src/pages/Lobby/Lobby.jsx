@@ -1,11 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CardBack from '../../components/CardBack/CardBack';
+import Card from '../../components/Card/Card';
 import styles from './Lobby.module.css';
 import { range } from 'lodash';
 import styled from 'styled-components/macro';
 import Avatar from '../../components/Avatar/Avatar';
-import Card from '../../components/Card/Card';
 import Alert from 'react-bootstrap/Alert';
 import {
   playerPickACardForPriority,
@@ -58,7 +57,7 @@ const Lobby = () => {
               marginLeft={index * 30}
               onClick={updatePriorities}
             >
-              <CardBack size="lg" />
+              <Card size="lg" />
             </PriorityCard>
           ))}
         </div>
@@ -89,13 +88,13 @@ const Lobby = () => {
         {range(4).map((index) => (
           <div key={index} onClick={() => pickASeat(index)}>
             {!seatCards[index] ? (
-              <CardBack
+              <Card
                 key={`back_${index}`}
                 size="lg"
                 disabled={playerName !== currentSeatPicker}
               />
             ) : (
-              <Card card={seatCards[index]} size="large" />
+              <Card card={seatCards[index]} size="lg" />
             )}
           </div>
         ))}
@@ -119,9 +118,9 @@ const Lobby = () => {
         {/* <Avatar name={player.name} index={player.avatarIndex} small={true} /> */}
         {createAvatar(player.name, player.avatarIndex)}
         {player.priority === null ? (
-          <CardBack key={`back_${index}`} size="sm" absolute={false} />
+          <Card key={`back_${index}`} size="md" absolute={false} />
         ) : (
-          <Card card={player.priorityCard} size="small" />
+          <Card card={player.priorityCard} size="md" />
         )}
       </React.Fragment>
     );

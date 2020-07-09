@@ -48,7 +48,7 @@ const GameAction = ({ card, state }) => {
               {action}
             </Alert>
           )}
-          {card && <Card card={card} />}
+          {card && <Card card={card} size="lg" />}
           <div className={styles.buttonContainer}>
             <Button>Đôi</Button>
             <Button>Khui</Button>

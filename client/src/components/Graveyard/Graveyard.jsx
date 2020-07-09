@@ -7,19 +7,17 @@ const Graveyard = ({ cards, position }) => {
   return (
     <div className={`${styles.container} ${styles[position]}`}>
       {cards.map((card, index) => {
-        const row = Math.floor(index / 9);
-        const column = index % 9;
+        const row = Math.floor(index / 8);
+        const column = index % 8;
         return (
-          <div
+          <Card
             key={`card_${position}_${index}`}
-            style={{
-              position: 'absolute',
-              marginLeft: 25 * column,
-              marginTop: 50 * row,
-            }}
-          >
-            <Card card={card} size="small" />
-          </div>
+            card={card}
+            size="md"
+            absolute={true}
+            marginLeft={25 * column}
+            marginTop={50 * row}
+          />
         );
       })}
     </div>

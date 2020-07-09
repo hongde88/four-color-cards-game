@@ -7,35 +7,30 @@ const Logo = ({ size }) => {
   const isSmall = size === 'sm';
   return (
     <Container isSmall={isSmall}>
-      <StyledCard degree={300} marginLeft={60} marginTop={40} isSmall={isSmall}>
+      <LogoCard degree={300} marginLeft={60} marginTop={40} isSmall={isSmall}>
         <Card
           card={{ color: 'green', character: 'general' }}
-          size={isSmall ? 'small' : 'large'}
+          size={isSmall ? 'md' : 'lg'}
         />
-      </StyledCard>
-      <StyledCard
-        degree={340}
-        marginLeft={100}
-        marginTop={20}
-        isSmall={isSmall}
-      >
+      </LogoCard>
+      <LogoCard degree={340} marginLeft={100} marginTop={20} isSmall={isSmall}>
         <Card
           card={{ color: 'yellow', character: 'general' }}
-          size={isSmall ? 'small' : 'large'}
+          size={isSmall ? 'md' : 'lg'}
         />
-      </StyledCard>
-      <StyledCard degree={20} marginLeft={140} marginTop={20} isSmall={isSmall}>
+      </LogoCard>
+      <LogoCard degree={20} marginLeft={140} marginTop={20} isSmall={isSmall}>
         <Card
           card={{ color: 'red', character: 'general' }}
-          size={isSmall ? 'small' : 'large'}
+          size={isSmall ? 'md' : 'lg'}
         />
-      </StyledCard>
-      <StyledCard degree={60} marginLeft={180} marginTop={40} isSmall={isSmall}>
+      </LogoCard>
+      <LogoCard degree={60} marginLeft={180} marginTop={40} isSmall={isSmall}>
         <Card
           card={{ color: 'white', character: 'general' }}
-          size={isSmall ? 'small' : 'large'}
+          size={isSmall ? 'md' : 'lg'}
         />
-      </StyledCard>
+      </LogoCard>
       <Text>TỨ SẮC</Text>
     </Container>
   );
@@ -54,14 +49,14 @@ export default Logo;
 const Container = styled.div.attrs((props) => ({
   style: {
     width: props.isSmall ? '200px' : '400px',
-    height: props.isSmall ? '180px' : '240px',
+    height: props.isSmall ? '160px' : '240px',
   },
 }))`
   position: relative;
   margin-bottom: 30px;
 `;
 
-const StyledCard = styled.div.attrs((props) => ({
+const LogoCard = styled.div.attrs((props) => ({
   style: {
     transform: `rotate(${props.degree}deg)`,
     marginLeft: props.isSmall ? '-15px' : '-30px',
