@@ -6,6 +6,7 @@ import {
   PICK_A_CARD_FOR_PRIORITY,
   SET_ROOM_CURRENT_PLAYER_SELECTED_CARD,
   SET_ROOM_CURRENT_PLAYER_FINAL_CARD,
+  SEND_PLAYER_ACTION,
 } from '../actions/types';
 
 import { setRoomError, setRoomInfo, setRoomSeatInfo } from '../actions/room';
@@ -112,6 +113,11 @@ const socketMiddleware = (store) => (next) => async (action) => {
     case SET_ROOM_CURRENT_PLAYER_FINAL_CARD:
       if (socket) {
         socket.emit('set room current player final card', action.payload);
+      }
+      break;
+    case SEND_PLAYER_ACTION:
+      if (socket) {
+        socket.emit('player action', action.payload);
       }
       break;
     default:

@@ -22,7 +22,7 @@ const Wrapper = () => {
           </Row>
         </>
       )}
-      {room.roomId && room.gameState !== 'starting' && (
+      {room.roomId && !room.gameStarted && (
         <>
           <Row noGutters className="justify-content-center">
             <Logo size="sm" />
@@ -32,7 +32,7 @@ const Wrapper = () => {
           </Row>
         </>
       )}
-      {room.roomId && room.gameState === 'starting' && <Game />}
+      {room.roomId && room.gameStarted && <Game />}
     </>
   );
 };

@@ -23,27 +23,26 @@ const Game = () => {
   const [seats, setSeats] = useState(null);
 
   useEffect(() => {
-    if (roomPlayers.length === 4) {
-      const player = roomPlayers.find((p) => p.name === clientPlayer.name);
-      const leftSeatName = player.adjacentPlayer;
-      const leftSeatPlayer = roomPlayers.find(
-        (player) => player.name === leftSeatName
-      );
-      const topSeatName = leftSeatPlayer.adjacentPlayer;
-      const topSeatPlayer = roomPlayers.find(
-        (player) => player.name === topSeatName
-      );
-      const rightSeatName = topSeatPlayer.adjacentPlayer;
-      const rightSeatPlayer = roomPlayers.find(
-        (player) => player.name === rightSeatName
-      );
+    // if (roomPlayers.length === 4) {
+    const player = roomPlayers.find((p) => p.name === clientPlayer.name);
+    const rightSeatName = player.adjacentPlayer;
+    const rightSeatPlayer = roomPlayers.find(
+      (player) => player.name === rightSeatName
+    );
+    const topSeatName = rightSeatPlayer.adjacentPlayer;
+    const topSeatPlayer = roomPlayers.find(
+      (player) => player.name === topSeatName
+    );
+    const leftSeatName = topSeatPlayer.adjacentPlayer;
+    const leftSeatPlayer = roomPlayers.find(
+      (player) => player.name === leftSeatName
+    );
 
-      setSeats({
-        left: leftSeatPlayer,
-        top: topSeatPlayer,
-        right: rightSeatPlayer,
-      });
-    }
+    setSeats({
+      left: leftSeatPlayer,
+      top: topSeatPlayer,
+      right: rightSeatPlayer,
+    });
   }, [roomPlayers]);
 
   return (

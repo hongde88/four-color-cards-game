@@ -1,22 +1,28 @@
 import { inRange } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
-// import styles from './Hand.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 import Card from '../Card/Card';
 import Draggable from '../Draggable/Draggable';
-import { updatePlayerCardOrder } from '../../store/actions/player';
-import { setRoomCurrentPlayerSelectedCard } from '../../store/actions/room';
+import {
+  updatePlayerCardOrder,
+  setPlayerSelectedCard,
+  removePlayerSelectedCard,
+} from '../../store/actions/player';
 
 const WIDTH = 30;
 
 const Hand = ({ cards }) => {
   const dispatch = useDispatch();
 
-  const currentPlayerSelectedCard = useSelector(
-    (state) => state.room.room.currentPlayerSelectedCard
+  const playerSelectedCards = useSelector(
+    (state) => state.player.player.selectedCards
   );
+
+  const deselectCards = useSelector((state) => state.room.room.deselectCards);
+
+  const [dragging, setDragging] = useState(false);
 
   const [state, setState] = useState({
     order: cards,
@@ -25,18 +31,16 @@ const Hand = ({ cards }) => {
   });
 
   useEffect(() => {
-    if (state.dragOrder) {
-      dispatch(updatePlayerCardOrder({ cards: state.dragOrder }));
-    }
-  }, [state.dragOrder]);
-
-  const onClick = (card, isDragging) => {
-    if (card && !isDragging) {
+    if (deselectCards) {
       dispatch(
-        setRoomCurrentPlayerSelectedCard({ currentPlayerSelectedCard: card })
+        removePlayerSelectedCard({
+          playerDeselectedCard: Array.isArray(playerSelectedCards)
+            ? playerSelectedCards
+            : [playerSelectedCards],
+        })
       );
     }
-  };
+  }, [deselectCards]);
 
   const handleDrag = useCallback(
     ({ translation, id }) => {
@@ -90,17 +94,48 @@ const Hand = ({ cards }) => {
                 key={`card_${card.id}`}
                 left={isDragging ? draggedLeft : left}
                 isDragging={isDragging}
-                onClick={() => onClick(card, isDragging)}
+                onMouseDown={() => {
+                  if (dragging) {
+                    setDragging(false);
+                  }
+                }}
+                onMouseMove={() => {
+                  if (!dragging) {
+                    setDragging(true);
+                  }
+                }}
+                onMouseUp={() => {
+                  if (!dragging) {
+                    // on click
+                    if (!playerSelectedCards.includes(card)) {
+                      dispatch(
+                        setPlayerSelectedCard({ playerSelectedCard: card })
+                      );
+                    } else {
+                      dispatch(
+                        removePlayerSelectedCard({
+                          playerDeselectedCard: [card],
+                        })
+                      );
+                    }
+
+                    // update card order if it's different from the original
+                    if (cards !== state.dragOrder) {
+                      dispatch(
+                        updatePlayerCardOrder({
+                          cards: state.dragOrder,
+                        })
+                      );
+                    }
+                  } else {
+                    setDragging(false);
+                  }
+                }}
               >
                 <Card
                   card={card}
                   size="lg"
-                  marginTop={
-                    currentPlayerSelectedCard &&
-                    currentPlayerSelectedCard.id === card.id
-                      ? -20
-                      : 0
-                  }
+                  marginTop={playerSelectedCards.includes(card) ? -20 : 0}
                 />
               </CardContainer>
             </Draggable>

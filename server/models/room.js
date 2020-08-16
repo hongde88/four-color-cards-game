@@ -11,12 +11,13 @@ class Room {
     this.players = [];
     this.currentPlayer = null;
     this.gameState = null;
-    this[cardsForSeatSelection] = [
-      new Card('general', 'green', 0),
-      new Card('general', 'yellow', 1),
-      new Card('general', 'red', 2),
-      new Card('general', 'white', 3),
-    ];
+    (this.gameStarted = null),
+      (this[cardsForSeatSelection] = [
+        new Card('general', 'green', 0),
+        new Card('general', 'yellow', 1),
+        new Card('general', 'red', 2),
+        new Card('general', 'white', 3),
+      ]);
     this.deckOfCards = this.generateDeckOfCards();
     this.priorities = [];
     this.currentSeatPickerIdx = null;
@@ -30,7 +31,10 @@ class Room {
     this.currentPlayerSelectedCard = null;
     this.currentPlayerFinalCard = null;
     this.cardsRemainingInDeck = this.deckOfCards.length;
+    this.playable = false;
     this.shuffle(this.deckOfCards);
+    this.actionCount = 4;
+    this.turnRank = -1;
   }
 
   generateDeckOfCards() {
@@ -157,7 +161,8 @@ class Room {
       gameState: this.gameState,
       currentSeatPicker: this.currentSeatPicker,
       seats: this.seats,
-      cardsRemainingInDeck: this.cardsRemainingInDeck,
+      cardsRemainingInDeck: this.deckOfCards.length,
+      gameStarted: this.gameStarted,
     };
   }
 }

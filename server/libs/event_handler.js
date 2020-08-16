@@ -1,8 +1,28 @@
 const nameGenerator = require('fakerator')();
 const randomString = require('randomstring');
 const Room = require('../models/room');
+const util = require('util');
 const messageCache = {};
 const rooms = {};
+const STRAIGHT_1 = JSON.stringify(['advisor', 'bishop', 'general']);
+const STRAIGHT_2 = JSON.stringify(['cannon', 'horse', 'rook']);
+
+const CHARACTERS = {
+  general: 'Tướng',
+  advisor: 'Sĩ',
+  bishop: 'Tượng',
+  rook: 'Xe',
+  cannon: 'Pháo',
+  horse: 'Mã',
+  soldier: 'Chuột',
+};
+
+const COLORS = {
+  green: 'xanh',
+  yellow: 'vàng',
+  red: 'đỏ',
+  white: 'trắng',
+};
 
 class EventHandler {
   constructor(io, socket) {
@@ -36,16 +56,19 @@ class EventHandler {
     );
 
     // set room current player selected card handler
-    this.socket.on(
-      'set room current player selected card',
-      this.handleSetRoomCurrentPlayerSelectedCardEvent()
-    );
+    // this.socket.on(
+    //   'set room current player selected card',
+    //   this.handleSetRoomCurrentPlayerSelectedCardEvent()
+    // );
 
     // set room current player final card handler
     this.socket.on(
       'set room current player final card',
       this.handleSetRoomCurrentPlayerFinalCardEvent()
     );
+
+    // player action handler
+    this.socket.on('player action', this.handlePlayerActionEvent());
 
     // leave handler
     this.socket.on('leave a room', this.handleDisconnectOrLeaveEvent('leave'));
@@ -178,10 +201,14 @@ class EventHandler {
             });
 
             // Set adjacent players
-            room.seats['green'].adjacentPlayer = room.seats['yellow'];
-            room.seats['yellow'].adjacentPlayer = room.seats['red'];
-            room.seats['red'].adjacentPlayer = room.seats['white'];
-            room.seats['white'].adjacentPlayer = room.seats['green'];
+            // room.seats['green'].adjacentPlayer = room.seats['yellow'];
+            // room.seats['yellow'].adjacentPlayer = room.seats['red'];
+            // room.seats['red'].adjacentPlayer = room.seats['white'];
+            // room.seats['white'].adjacentPlayer = room.seats['green'];
+            room.seats['green'].adjacentPlayer = room.seats['white'];
+            room.seats['white'].adjacentPlayer = room.seats['red'];
+            room.seats['red'].adjacentPlayer = room.seats['yellow'];
+            room.seats['yellow'].adjacentPlayer = room.seats['green'];
 
             // Get players in the right order
             const firstPlayer = room.priorities[0];
@@ -197,7 +224,7 @@ class EventHandler {
             fourthPlayer.cards = piles[3];
 
             // Done picking seats. Start the game
-            room.gameState = 'starting';
+            room.gameStarted = 'started';
             room.cardsRemainingInDeck = room.deckOfCards.length;
             this.io.to(roomId).emit('update room info', room.toJSON());
 
@@ -221,11 +248,20 @@ class EventHandler {
             setTimeout(() => {
               const gameStarterName = room.priorities[0].name;
               room.currentPlayer = room.priorities[0];
+              room.currentPlayer.action = 'play';
+              const playable = room.players.every(
+                (player) => player.action !== null
+              );
+              room.playable = playable;
+              room.gameState = 'starting';
               this.io.to(roomId).emit('update room info', {
-                action: `${gameStarterName}, place a card to start the game`,
+                action: `${room.currentPlayer.name} sẽ đánh trước. Đang chờ mọi người xếp bài`,
                 turnPlayerName: gameStarterName,
+                playable,
+                enableSubmit: 0,
+                enablePass: Date.now(),
               });
-            }, 1000);
+            }, 500);
           }
         }
 
@@ -332,17 +368,17 @@ class EventHandler {
     };
   }
 
-  handleSetRoomCurrentPlayerSelectedCardEvent() {
-    return (data) => {
-      const roomId = this.socket.roomId;
+  // handleSetRoomCurrentPlayerSelectedCardEvent() {
+  //   return (data) => {
+  //     const roomId = this.socket.roomId;
 
-      if (roomId && rooms[roomId]) {
-        rooms[roomId].currentPlayerSelectedCard =
-          data.currentPlayerSelectedCard;
-        this.io.to(roomId).emit('update room info', data);
-      }
-    };
-  }
+  //     if (roomId && rooms[roomId]) {
+  //       rooms[roomId].currentPlayerSelectedCard =
+  //         data.currentPlayerSelectedCard;
+  //       this.io.to(roomId).emit('update room info', data);
+  //     }
+  //   };
+  // }
 
   handleSetRoomCurrentPlayerFinalCardEvent() {
     return (data) => {
@@ -355,8 +391,7 @@ class EventHandler {
         ) {
           // don't allow users to place a general card
           return this.socket.emit('update room info', {
-            action:
-              'Please place another card because general cards are not placeable',
+            action: 'Làm ơn đánh con khác ngoài con tướng',
           });
         }
 
@@ -366,19 +401,329 @@ class EventHandler {
           data.currentPlayerFinalCardIdx,
           1
         );
+        rooms[roomId].actionCount--;
 
         rooms[roomId].currentPlayer.discarded.push(data.currentPlayerFinalCard);
         this.io.to(roomId).emit('update room info', {
           ...rooms[roomId].toJSON(),
           currentPlayerFinalCard: data.currentPlayerFinalCard,
+          action: `${rooms[roomId].currentPlayer.name} đánh ra ${
+            CHARACTERS[data.currentPlayerFinalCard.character]
+          } ${COLORS[data.currentPlayerFinalCard.color]}`,
+          enableSubmit: Date.now(),
+          enablePass: Date.now(),
+          playable: false,
         });
+
         this.socket.emit('update player info', {
           cards: rooms[roomId].currentPlayer.cards,
           melded: rooms[roomId].currentPlayer.melded,
           discarded: rooms[roomId].currentPlayer.discarded,
         });
+
+        // reset player actions
+        rooms[roomId].players.forEach((player) => (player.action = null));
       }
     };
+  }
+
+  handlePlayerActionEvent() {
+    return (data) => {
+      const roomId = data.roomId || this.socket.roomId;
+      const playerName = data.playerName || this.socket.playerName;
+
+      if (roomId && rooms[roomId]) {
+        const room = rooms[roomId];
+        room.actionCount--;
+
+        const player = room.players.find(
+          (player) => player.name === playerName
+        );
+
+        // player.action = data.playerAction;
+        // player.selectedCards = data.playerSelectedCards;
+        // player.cards = data.playerCards.cards;
+
+        if (data.playerAction === 'draw') {
+          const drawnCard = room.deckOfCards.shift();
+          room.currentPlayerFinalCard = drawnCard;
+          room.currentPlayer.discarded.push(drawnCard);
+          room.gameState = 'drawing';
+
+          room.actionCount = 4;
+          room.turnRank = -1;
+          room.players.forEach((player) => (player.action = null));
+
+          return this.io.to(roomId).emit('update room info', {
+            playable: false,
+            drawable: false,
+            action: `${room.currentPlayer.name} bốc ${
+              CHARACTERS[drawnCard.character]
+            } ${COLORS[drawnCard.color]}`,
+            currentPlayerFinalCard: drawnCard,
+            turnPlayerName: room.currentPlayer.name,
+            ...room.toJSON(),
+            enablePass: Date.now(),
+            enableSubmit: Date.now(),
+            gameState: room.gameState,
+          });
+        }
+
+        player.action = data.playerAction;
+        player.selectedCards = data.playerSelectedCards;
+        player.cards = data.playerCards.cards;
+
+        /**
+         * turnResult = 0 (single), 1 (straight), 2 (pair), 3 (3 of a kind)
+         */
+        if (
+          player.action === 'submit' &&
+          player.selectedCards &&
+          Array.isArray(player.selectedCards)
+        ) {
+          if (
+            player.selectedCards.length === 1 &&
+            room.currentPlayer.adjacentPlayer.name === player.name &&
+            player.selectedCards[0].character ===
+              room.currentPlayerFinalCard.character
+          ) {
+            room.turnResult = 0;
+          } else if (
+            player.selectedCards.length === 2 &&
+            player.selectedCards[0].character ===
+              room.currentPlayerFinalCard.character &&
+            player.selectedCards[0].color ===
+              room.currentPlayerFinalCard.color &&
+            player.selectedCards[1].character ===
+              room.currentPlayerFinalCard.character &&
+            player.selectedCards[1].color === room.currentPlayerFinalCard.color
+          ) {
+            room.turnResult = 2;
+          } else if (
+            player.selectedCards.length === 3 &&
+            player.selectedCards[0].character ===
+              room.currentPlayerFinalCard.character &&
+            player.selectedCards[0].color ===
+              room.currentPlayerFinalCard.color &&
+            player.selectedCards[1].character ===
+              room.currentPlayerFinalCard.character &&
+            player.selectedCards[1].color ===
+              room.currentPlayerFinalCard.color &&
+            player.selectedCards[2].character ===
+              room.currentPlayerFinalCard.character &&
+            player.selectedCards[2].color === room.currentPlayerFinalCard.color
+          ) {
+            room.turnResult = 3;
+          } else if (
+            player.selectedCards.length <= 3 &&
+            room.currentPlayer.adjacentPlayer.name === player.name
+          ) {
+            this.checkForStraight(
+              room,
+              player.selectedCards,
+              room.currentPlayerFinalCard
+            );
+          }
+
+          if (room.turnRank < room.turnResult) {
+            // const card = room.currentPlayer.discarded.pop();
+            // const card =
+            //   room.currentPlayer.discarded[
+            //     room.currentPlayer.discarded.length - 1
+            //   ];
+            if (!room.removeCurrentPlayerDiscardedCard) {
+              room.currentPlayer.discarded.pop();
+              room.removeCurrentPlayerDiscardedCard = true;
+            }
+            room.turnRank = room.turnResult;
+            room.currentPlayer = player;
+            room.selectedCards = player.selectedCards;
+            player.melded.push([
+              room.currentPlayerFinalCard,
+              ...player.selectedCards,
+            ]);
+            player.tempMelded = true;
+          }
+        } else if (
+          player.action === 'submit' &&
+          player.name === room.currentPlayer.name &&
+          room.currentPlayerFinalCard.character === 'general'
+        ) {
+          // if (!room.removeCurrentPlayerDiscardedCard) {
+          room.currentPlayer.discarded.pop();
+          // room.removeCurrentPlayerDiscardedCard = true;
+          // }
+          // room.turnRank = room.turnResult;
+          // room.currentPlayer = player;
+          // room.selectedCards = player.selectedCards;
+          player.melded.push([room.currentPlayerFinalCard]);
+        }
+
+        let otherPlayers = room.players.filter(
+          (player) => player.name !== room.currentPlayer.name
+        );
+
+        const allPasses = otherPlayers.every(
+          (player) => player.action === 'pass'
+        );
+
+        // console.log({ actionPlayer: data });
+        // console.log({ gameState: room.gameState });
+        // console.log({ actionCount: room.actionCount });
+        // console.log({ allPasses });
+        // console.log({ currentTurnPlayer: room.currentPlayer.name });
+        // console.log({
+        //   currentPlayerSelectedCards: room.currentPlayer.selectedCards,
+        // });
+        // console.log({ currentPlayerAction: room.currentPlayer.action });
+
+        if (allPasses && room.currentPlayer.action !== 'submit') {
+          if (room.gameState === 'starting') {
+            this.io.to(roomId).emit('update room info', {
+              playable: true,
+              action: `${room.currentPlayer.name}, mời đánh một con để bắt đầu`,
+              enableSubmit: 0,
+              enablePass: 0,
+              deselectCards: false,
+            });
+          } else if (
+            room.gameState === 'next' ||
+            room.gameState === 'meld' ||
+            (room.gameState === 'drawing' &&
+              room.currentPlayer.action === 'pass')
+          ) {
+            // room.gameState = 'drawing from deck';
+            room.currentPlayer = room.currentPlayer.adjacentPlayer;
+            this.io.to(roomId).emit('update room info', {
+              playable: 0,
+              drawable: Date.now(),
+              action: `${room.currentPlayer.name}, mời bốc một con để tiếp tục`,
+              turnPlayerName: room.currentPlayer.name,
+              enableSubmit: 0,
+              enablePass: 0,
+              deselectCards: false,
+            });
+          } else if (room.gameState === 'drawing') {
+          }
+          room.gameState = 'next';
+          room.actionCount = 4;
+          room.turnRank = -1;
+          room.players.forEach((player) => (player.action = null));
+
+          return;
+        }
+
+        if (room.actionCount === 0) {
+          // if (room.gameState === 'drawing') {
+          //   room.gameState = 'next';
+          //   this.io.to(roomId).emit('update room info', {
+          //     playable: true,
+          //     action: `${room.currentPlayer.name}, mời bốc hoặc đánh ra một con để tiếp tục`,
+          //     currentPlayerFinalCard: null,
+          //     turnPlayerName: room.currentPlayer.name,
+          //     ...room.toJSON(),
+          //     enableSubmit: 0,
+          //     enablePass: 0,
+          //     deselectCards: true,
+          //   });
+
+          //   room.actionCount = 4;
+          //   room.turnRank = -1;
+          //   room.players.forEach((player) => (player.action = null));
+          // }
+
+          room.gameState = 'meld';
+
+          if (room.turnRank === -1) {
+            room.currentPlayer = room.currentPlayer.adjacentPlayer;
+          }
+
+          // this.io.to(roomId).emit('update room info', {
+          //   playable: true,
+          //   action: `${room.currentPlayer.name}, place a card to continue`,
+          //   turnPlayerName: room.currentPlayer.name,
+          //   enableSubmit: 0,
+          //   enablePass: 0,
+          // });
+
+          room.currentPlayer.tempMelded = false;
+          room.removeCurrentPlayerDiscardedCard = false;
+
+          room.currentPlayer.selectedCards.forEach((card) => {
+            const cardIdx = room.currentPlayer.cards.findIndex(
+              (c) => c.character === card.character && c.color === card.color
+            );
+            if (cardIdx > -1) {
+              room.currentPlayer.cards.splice(cardIdx, 1);
+            }
+          });
+
+          otherPlayers = room.players.filter(
+            (player) => player.name !== room.currentPlayer.name
+          );
+
+          otherPlayers.forEach((player) => {
+            if (player.tempMelded) {
+              player.melded.pop();
+              player.tempMelded = false;
+            }
+          });
+
+          room.players.forEach((player) => {
+            this.io.to(player.socketId).emit('update player info', {
+              cards: player.cards,
+              melded: player.melded,
+              discarded: player.discarded,
+            });
+          });
+
+          this.io.to(roomId).emit('update room info', {
+            playable: true,
+            action: `${room.currentPlayer.name} ăn ${
+              CHARACTERS[room.currentPlayerFinalCard.character]
+            } ${
+              COLORS[room.currentPlayerFinalCard.color]
+            }. Mời đánh ra một con để tiếp tục`,
+            currentPlayerFinalCard: null,
+            turnPlayerName: room.currentPlayer.name,
+            ...room.toJSON(),
+            enableSubmit: 0,
+            enablePass: 0,
+            deselectCards: Date.now(),
+          });
+
+          room.actionCount = 4;
+          room.turnRank = -1;
+          room.players.forEach((player) => (player.action = null));
+        }
+      }
+    };
+  }
+
+  checkForStraight(room, selectedCards, currentPlayerFinalCard) {
+    room.turnResult = -1;
+    if (currentPlayerFinalCard.character === 'soldier') {
+      if (selectedCards.every((card) => card.character === 'soldier')) {
+        const check = new Set();
+        check.add(currentPlayerFinalCard.color);
+        selectedCards.forEach((card) => check.add(card.color));
+        room.turnResult = check.size === selectedCards.length + 1 ? 1 : -1;
+      }
+    } else {
+      if (
+        selectedCards.every(
+          (card) => card.color === currentPlayerFinalCard.color
+        )
+      ) {
+        const straight = [];
+        straight.push(currentPlayerFinalCard.character);
+        selectedCards.forEach((card) => straight.push(card.character));
+        const straightStr = JSON.stringify(straight.sort());
+        if (straightStr === STRAIGHT_1 || straightStr === STRAIGHT_2) {
+          room.turnResult = 1;
+        }
+      }
+    }
   }
 }
 

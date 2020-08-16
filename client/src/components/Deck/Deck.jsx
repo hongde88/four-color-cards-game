@@ -6,7 +6,7 @@ import styles from './Deck.module.css';
 const Deck = ({ remaining }) => {
   const deck = [];
   for (let i = 0; i < 10; i++) {
-    deck.push(<Card key={i} degree={160 + 3 * i} size="sm" absolute={true} />);
+    deck.push(<Card key={i} degree={160 + 8 * i} size="sm" absolute={true} />);
   }
 
   return (

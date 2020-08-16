@@ -3,6 +3,8 @@ import {
   SET_PLAYER_INFO,
   UPDATE_PLAYER_INFO,
   UPDATE_PLAYER_CARD_ORDER,
+  SET_PLAYER_SELECTED_CARD,
+  REMOVE_PLAYER_SELECTED_CARD,
 } from '../actions/types';
 
 const initialState = {
@@ -12,6 +14,7 @@ const initialState = {
     isHost: false,
     isYourTurn: false,
     cardForSeat: null,
+    selectedCards: [],
   },
   cards: {
     cards: [],
@@ -45,6 +48,27 @@ export default function (state = initialState, action) {
         cards: {
           ...state.cards,
           ...payload,
+        },
+      };
+    case SET_PLAYER_SELECTED_CARD:
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          selectedCards: [
+            ...state.player.selectedCards,
+            payload.playerSelectedCard,
+          ],
+        },
+      };
+    case REMOVE_PLAYER_SELECTED_CARD:
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          selectedCards: state.player.selectedCards.filter(
+            (card) => !payload.playerDeselectedCard.includes(card)
+          ),
         },
       };
     default:

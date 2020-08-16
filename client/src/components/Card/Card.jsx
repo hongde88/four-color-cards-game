@@ -91,7 +91,7 @@ Card.defaultProps = {
 };
 
 Card.propTypes = {
-  card: PropTypes.object.isRequired,
+  card: PropTypes.object,
   size: PropTypes.string,
   degree: PropTypes.number,
   absolute: PropTypes.bool,

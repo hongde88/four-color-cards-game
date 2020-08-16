@@ -6,10 +6,12 @@ class Player {
     this.cards = cards;
     this.melded = meldedCards;
     this.discarded = discardedCards;
+    this.selectedCards = [];
     this.priorityCard = null;
     this.priority = null;
     this.seatCard = null;
     this.adjacentPlayer = null;
+    this.action = null;
     this.balance = 100;
   }
 
@@ -25,6 +27,7 @@ class Player {
       adjacentPlayer: this.adjacentPlayer
         ? this.adjacentPlayer.name
         : this.adjacentPlayer,
+      action: this.action,
     };
   }
 }
