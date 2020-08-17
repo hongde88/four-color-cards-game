@@ -23,8 +23,15 @@ const GameAction = ({ card, state }) => {
     (state) => state.player.player.selectedCards
   );
   const [clientAction, setClientAction] = useState(null);
+  const playerError = useSelector((state) => state.player.errors.message);
   const enableSubmit = useSelector((state) => state.room.room.enableSubmit);
   const enablePass = useSelector((state) => state.room.room.enablePass);
+
+  useEffect(() => {
+    if (playerError) {
+      setClientAction(playerError);
+    }
+  }, [playerError]);
 
   useEffect(() => {
     const submitBtn = document.getElementById('submitBtn');
@@ -148,6 +155,33 @@ const GameAction = ({ card, state }) => {
     // }
   };
 
+  const onFourKindSubmissionClick = () => {
+    if (playerSelectedCards.length !== 4) {
+      setClientAction('Không phải Thiên');
+    } else {
+      dispatch(
+        sendPlayerAction({
+          playerSelectedCards,
+          playerAction: 'fourkind',
+          playerCards: clientCards,
+        })
+      );
+    }
+  };
+
+  const onThreeKindSubmissionClick = () => {
+    if (playerSelectedCards.length !== 3) {
+      setClientAction('Không phải Khàn');
+    } else {
+      dispatch(
+        sendPlayerAction({
+          playerSelectedCards,
+          playerAction: 'threekind',
+        })
+      );
+    }
+  };
+
   switch (state) {
     case 'choose':
       content = (
@@ -229,6 +263,15 @@ const GameAction = ({ card, state }) => {
               </Button>
             </div>
           )}
+          <div className={styles.buttonContainer}>
+            <Button id="fourkindBtn" onClick={onFourKindSubmissionClick}>
+              Trình Thiên
+            </Button>
+            <Button id="threekindBtn" onClick={onThreeKindSubmissionClick}>
+              Đặt Khàn
+            </Button>
+            <Button id="winBtn">Tới</Button>
+          </div>
         </>
       );
       break;

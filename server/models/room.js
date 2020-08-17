@@ -11,13 +11,13 @@ class Room {
     this.players = [];
     this.currentPlayer = null;
     this.gameState = null;
-    (this.gameStarted = null),
-      (this[cardsForSeatSelection] = [
-        new Card('general', 'green', 0),
-        new Card('general', 'yellow', 1),
-        new Card('general', 'red', 2),
-        new Card('general', 'white', 3),
-      ]);
+    this.gameStarted = null;
+    this[cardsForSeatSelection] = [
+      new Card('general', 'green', 0),
+      new Card('general', 'yellow', 1),
+      new Card('general', 'red', 2),
+      new Card('general', 'white', 3),
+    ];
     this.deckOfCards = this.generateDeckOfCards();
     this.priorities = [];
     this.currentSeatPickerIdx = null;
@@ -151,6 +151,40 @@ class Room {
     }
 
     return piles;
+  }
+
+  dealGoodPiles() {
+    let piles = this.deal();
+
+    while (!this.validateGoodPiles(piles)) {
+      this.deckOfCards = this.generateDeckOfCards();
+      this.shuffle(this.deckOfCards);
+      piles = this.deal();
+    }
+
+    return piles;
+  }
+
+  validateGoodPiles(piles) {
+    return piles.every((pile) => {
+      const map = {};
+      pile.forEach((card) => {
+        if (map[`${card.character}_${card.color}`]) {
+          map[`${card.character}_${card.color}`]++;
+        } else {
+          map[`${card.character}_${card.color}`] = 1;
+        }
+      });
+
+      let threeKindCount = 0;
+      let fourKindCount = 0;
+      Object.keys(map).forEach((key) => {
+        if (map[key] === 3) threeKindCount++;
+        if (map[key] === 4) fourKindCount++;
+      });
+
+      return threeKindCount + fourKindCount < 4;
+    });
   }
 
   toJSON() {

@@ -217,7 +217,8 @@ class EventHandler {
             const fourthPlayer = thirdPlayer.adjacentPlayer;
 
             // Deal cards
-            const piles = room.deal();
+            // const piles = room.deal();
+            const piles = room.dealGoodPiles();
             firstPlayer.cards = piles[0];
             secondPlayer.cards = piles[1];
             thirdPlayer.cards = piles[2];
@@ -428,9 +429,27 @@ class EventHandler {
   }
 
   handlePlayerActionEvent() {
-    return (data) => {
+    return (data, callback) => {
       const roomId = data.roomId || this.socket.roomId;
       const playerName = data.playerName || this.socket.playerName;
+
+      if (data.playerAction === 'fourkind') {
+        return this.handleFourKindSubmission(
+          roomId,
+          playerName,
+          data,
+          callback
+        );
+      }
+
+      if (data.playerAction === 'threekind') {
+        return this.handleThreeKindSubmission(
+          roomId,
+          playerName,
+          data,
+          callback
+        );
+      }
 
       if (roomId && rooms[roomId]) {
         const room = rooms[roomId];
@@ -439,6 +458,8 @@ class EventHandler {
         const player = room.players.find(
           (player) => player.name === playerName
         );
+
+        if (!player) return;
 
         // player.action = data.playerAction;
         // player.selectedCards = data.playerSelectedCards;
@@ -723,6 +744,91 @@ class EventHandler {
           room.turnResult = 1;
         }
       }
+    }
+  }
+
+  handleFourKindSubmission(roomId, playerName, data, callback) {
+    const room = rooms[roomId];
+    if (room) {
+      const player = room.players.find((player) => player.name === playerName);
+
+      if (!player) return;
+
+      player.selectedCards = data.playerSelectedCards;
+      player.cards = data.playerCards.cards;
+
+      if (
+        player.selectedCards &&
+        Array.isArray(player.selectedCards) &&
+        player.selectedCards.length === 4
+      ) {
+        const { character, color } = player.selectedCards[0];
+        const isFourOfAKind = player.selectedCards.every(
+          (card) => card.character === character && card.color === color
+        );
+
+        if (isFourOfAKind) {
+          // remove 4 of a kind from the player's hand
+          player.selectedCards.forEach((card) => {
+            const cardIdx = player.cards.findIndex(
+              (c) => c.character === card.character && c.color === card.color
+            );
+            if (cardIdx > -1) {
+              player.cards.splice(cardIdx, 1);
+            }
+          });
+
+          // add 4 of a kind to melded
+          player.melded.push(player.selectedCards);
+
+          this.socket.emit('update player info', {
+            cards: player.cards,
+            melded: player.melded,
+          });
+
+          this.io.to(roomId).emit('update room info', {
+            ...room.toJSON(),
+          });
+
+          return;
+        }
+      }
+
+      callback({
+        type: 'player error',
+        message: 'Không phải Thiên',
+      });
+    }
+  }
+
+  handleThreeKindSubmission(roomId, playerName, data, callback) {
+    const room = rooms[roomId];
+    if (room) {
+      const player = room.players.find((player) => player.name === playerName);
+
+      if (!player) return;
+
+      player.selectedCards = data.playerSelectedCards;
+
+      if (
+        player.selectedCards &&
+        Array.isArray(player.selectedCards) &&
+        player.selectedCards.length === 3
+      ) {
+        const { character, color } = player.selectedCards[0];
+        const isThreeOfAKind = player.selectedCards.every(
+          (card) => card.character === character && card.color === color
+        );
+
+        if (isThreeOfAKind) {
+          return;
+        }
+      }
+
+      callback({
+        type: 'player error',
+        message: 'Không phải Khàn',
+      });
     }
   }
 }

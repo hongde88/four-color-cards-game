@@ -117,7 +117,15 @@ const socketMiddleware = (store) => (next) => async (action) => {
       break;
     case SEND_PLAYER_ACTION:
       if (socket) {
-        socket.emit('player action', action.payload);
+        socket.emit('player action', action.payload, (response) => {
+          if (response.type === 'player error') {
+            store.dispatch(
+              setPlayerError({
+                message: response.message,
+              })
+            );
+          }
+        });
       }
       break;
     default:
